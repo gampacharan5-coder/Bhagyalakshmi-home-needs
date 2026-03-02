@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhagyalakshmi Home Needs | Premium Kitchenware</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --primary-color: #d32f2f;
+            --secondary-color: #ffb300;
+            --text-dark: #333;
+            --bg-light: #f9f9f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            max-width: 100%;
+            /* Prevent horizontal overflow */
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            /* Prevent horizontal scrolling entirely */
+        }
+
+        /* Header Navigation */
+        header {
+            background-color: #fff;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Search Bar Navigation */
+        .nav-search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-search-input {
+            padding: 8px 15px 8px 35px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            width: 150px;
+            transition: width 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f9f9f9;
+        }
+
+        .nav-search-input:focus {
+            width: 250px;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(211, 47, 47, 0.2);
+        }
+
+        .nav-search-icon {
+            position: absolute;
+            left: 10px;
+            color: #888;
+            width: 16px;
+            height: 16px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 300px;
+            background-color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            margin-top: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1005;
+        }
+
+        .search-results-dropdown.active {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            text-decoration: none;
+            color: #333 !important;
+            /* Explicitly dark text */
+            font-weight: normal;
+            /* Override bold links */
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .search-result-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            margin-right: 15px;
+            background-color: #fff;
+            border-radius: 4px;
+        }
+
+        .search-result-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            /* Ensure it doesn't inherit center alignment */
+        }
+
+        .search-result-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #222 !important;
+            /* Explicitly dark, override link colors */
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+
+        .search-result-price {
+            font-size: 13px;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .search-no-results {
+            padding: 15px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            background-color: #fff;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            border-radius: 8px;
+            top: 100%;
+            left: 0;
+            padding: 5px 0;
+            transform: translateY(15px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .dropdown-content a,
+        .dropdown-submenu-content a,
+        .dropdown-submenu-title {
+            color: var(--text-dark);
+            padding: 10px 20px;
+            text-decoration: none;
+            display: block;
+            font-weight: 500;
+            font-size: 15px;
+            transition: background-color 0.3s, color 0.3s, padding-left 0.3s;
+            cursor: pointer;
+        }
+
+        .dropdown-content a:hover,
+        .dropdown-submenu-content a:hover,
+        .dropdown-submenu-title:hover {
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            padding-left: 25px;
+            /* Slight indent animation on hover */
+        }
+
+        .dropdown:hover>.dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Nested Submenu */
+        .dropdown-submenu {
+            position: relative;
+            display: block;
+        }
+
+        .dropdown-submenu-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            background-color: #fff;
+            min-width: 200px;
+            /* Slightly wider to accommodate hover shifts */
+            box-shadow: -4px 8px 24px rgba(0, 0, 0, 0.12);
+            /* Softer shadow on the left */
+            z-index: 1002;
+            border-radius: 8px;
+            top: -5px;
+            /* Aligns neatly with the parent link */
+            right: 100%;
+            left: auto;
+            padding: 8px 0;
+            transform: translateX(-10px) translateY(5px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .dropdown-submenu:hover>.dropdown-submenu-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .dropdown-submenu-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-submenu-title::before {
+            content: '\25C2';
+            /* Left arrow */
+            margin-right: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* HERO SECTION: Scrolling Animations */
+        .animated-hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            overflow: hidden;
+            background-color: #111;
+            /* Dark background behind images */
+        }
+
+        /* The scrolling container */
+        .scrolling-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .scrolling-track {
+            display: flex;
+            align-items: center;
+            width: 200%;
+            animation: scrollRight 25s linear infinite;
+            /* Animates to the right */
+        }
+
+        /* Images inside the scroll */
+        .scroll-img {
+            width: 16.66%;
+            height: 70vh;
+            object-fit: cover;
+            opacity: 0.6;
+            /* Slight transparency so text stands out */
+            padding: 10px;
+            border-radius: 20px;
+        }
+
+        @keyframes scrollRight {
+            0% {
+                transform: translateX(-50%);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        /* Dark overlay to make text pop */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2;
+        }
+
+        /* Hero Text Animations */
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 52px;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: slideDown 1s ease-out forwards;
+        }
+
+        .hero-content .highlight {
+            color: var(--secondary-color);
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: slideUp 1s ease-out 0.5s forwards;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--primary-color);
+            border-radius: 30px;
+            text-decoration: none;
+            opacity: 0;
+            animation: popIn 0.6s ease 1s forwards;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #b71c1c;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes floatButton {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
+            }
+
+            50% {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 25px rgba(211, 47, 47, 0.6);
+            }
+        }
+
+        /* PRODUCTS SECTION */
+        .products-section,
+        .contact-section {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            border-radius: 2px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            /* Lighter base shadow */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+            /* Bouncy scale */
+            border: 1px solid #f0f0f0;
+            /* Subtle definition */
+        }
+
+        .product-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            /* Pop up and out */
+            box-shadow: 0 15px 35px rgba(211, 47, 47, 0.15);
+            /* Primary color tinted shadow */
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: contain;
+            /* Prevents images from being cropped/zoomed */
+            background-color: #fff;
+            /* Ensures transparent images look neat */
+            padding: 15px;
+            /* Adds breathing room around the product */
+            image-rendering: -webkit-optimize-contrast;
+            /* Sharpens images */
+            mix-blend-mode: multiply;
+            /* Removes white backgrounds on some images if necessary */
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .product-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* CONTACT SECTION */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            /* Increased from 900px to elegantly fit 3 columns */
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .contact-card {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid var(--primary-color);
+            transition: transform 0.3s ease, border-top-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-8px);
+            border-top-color: var(--secondary-color);
+            /* Pulse interaction */
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-card h3 {
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .contact-link {
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* CHATBOT CSS */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 99999;
+            font-family: 'Poppins', sans-serif;
+            pointer-events: none;
+            /* Let clicks pass through the wrapper */
+        }
+
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            pointer-events: auto;
+            /* Re-enable clicks */
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            background-color: #b71c1c;
+        }
+
+        .chat-button svg {
+            fill: #fff;
+            width: 30px;
+            height: 30px;
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            max-width: 85vw;
+            /* Override the universal max-width: 100% */
+            height: 450px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            pointer-events: auto;
+            /* Re-enable clicks */
+        }
+
+        .chat-window.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .close-chat {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f5f5f5;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-out;
+            color: #333;
+            /* Explicit color */
+        }
+
+        .message.bot {
+            background-color: #e0e0e0;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user {
+            background-color: var(--primary-color);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+            color: #333;
+            /* Explicit text color */
+            background-color: #fff;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .send-button:hover {
+            background-color: #b71c1c;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body id="top">
+
+    <header>
+        <div class="logo">Bhagyalakshmi Home Needs</div>
+        <ul class="nav-links">
+            <li><a href="#top">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0);">Our Products ▼</a>
+                <div class="dropdown-content" id="main-dropdown-content">
+                    <div class="dropdown-submenu">
+                        <a href="javascript:void(0);" class="dropdown-submenu-title">Mixer</a>
+                        <div class="dropdown-submenu-content">
+                            <a href="#mixers-preethi">Preethi</a>
+                            <a href="#mixers-prestige">Prestige</a>
+                            <a href="javascript:void(0);">Ultra</a>
+                            <a href="javascript:void(0);">Ganga</a>
+                            <a href="javascript:void(0);">Electron</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-submenu">
+                        <a href="javascript:void(0);" class="dropdown-submenu-title">Grinder</a>
+                        <div class="dropdown-submenu-content">
+                            <a href="#grinders-ultra">Ultra</a>
+                            <a href="javascript:void(0);">Prestige</a>
+                            <a href="javascript:void(0);">Preethi</a>
+                            <a href="javascript:void(0);">Lakshmi</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-submenu">
+                        <a href="javascript:void(0);" class="dropdown-submenu-title">Cookers</a>
+                        <div class="dropdown-submenu-content">
+                            <a href="#cookers-prestige">Prestige</a>
+                            <a href="javascript:void(0);">Butterfly</a>
+                            <a href="#cookers-ganga">Ganga</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-submenu">
+                        <a href="javascript:void(0);" class="dropdown-submenu-title">Fans</a>
+                        <div class="dropdown-submenu-content">
+                            <a href="javascript:void(0);">Crompton</a>
+                            <a href="javascript:void(0);">Havells</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-submenu">
+                        <a href="javascript:void(0);" class="dropdown-submenu-title">Blenders</a>
+                        <div class="dropdown-submenu-content">
+                            <a href="javascript:void(0);">Prestige</a>
+                            <a href="javascript:void(0);">Panasonic</a>
+                            <a href="javascript:void(0);">Mexican</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-submenu">
+                        <a href="javascript:void(0);" class="dropdown-submenu-title">Gas Stove</a>
+                        <div class="dropdown-submenu-content">
+                            <a href="#gas-stove-preethi">Preethi</a>
+                            <a href="#gas-stove-prestige">Prestige</a>
+                            <a href="javascript:void(0);">Ganga</a>
+                            <a href="javascript:void(0);">Butterfly</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-submenu">
+                        <a href="javascript:void(0);" class="dropdown-submenu-title">Water Filters</a>
+                        <div class="dropdown-submenu-content">
+                            <a href="javascript:void(0);">Kent</a>
+                            <a href="javascript:void(0);">Pure It</a>
+                            <a href="javascript:void(0);">Aquaguard</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li class="nav-search-container" onclick="event.stopPropagation()">
+                <svg class="nav-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" class="nav-search-input" id="navSearchInput" placeholder="Search products..."
+                    onkeyup="filterProducts()" onfocus="filterProducts()">
+                <div class="search-results-dropdown" id="searchResultsDropdown">
+                    <!-- Results will populate here -->
+                </div>
+            </li>
+        </ul>
+    </header>
+
+    <section id="hero" class="animated-hero">
+
+        <div class="scrolling-wrapper">
+            <div class="scrolling-track">
+                <img src="cooker.png" class="scroll-img" alt="Cooker">
+                <img src="mixer.png" class="scroll-img" alt="Mixer">
+                <img src="grinder.png" class="scroll-img" alt="grinder">
+                <img src="pan.png" class="scroll-img" alt="pan">
+                <img src="kent.png" class="scroll-img" alt="kent">
+                <img src="set.png" class="scroll-img" alt="set">
+
+
+                <img src="cooker.png" class="scroll-img" alt="Cooker">
+                <img src="mixer.png" class="scroll-img" alt="Mixer">
+                <img src="grinder.png" class="scroll-img" alt="grinder">
+                <img src="pan.png" class="scroll-img" alt="pan">
+                <img src="set.png" class="scroll-img" alt="set">
+            </div>
+        </div>
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <h1 class="animate-title">Welcome to <br><span class="highlight">Bhagyalakshmi</span> Home Needs</h1>
+            <p class="animate-subtitle">Bringing premium cookware and top-tier appliances to your kitchen.</p>
+            <a href="#shop" class="btn"
+                style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+                Explore Collections
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <section id="shop" class="products-section">
+        <h2 class="section-title">Our Premium Collection</h2>
+        <div class="product-grid">
+
+            <div class="product-card">
+                <img src="preethi_gas_stove.jpg" alt="Gas Stove">
+                <div class="product-info">
+                    <h3 class="product-title">3-Burner Gas Stove</h3>
+                    <p class="product-price">₹4,500</p>
+                    <p class="product-desc">Toughened glass top with high-efficiency brass burners.</p>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="grinder.png" alt="Wet Grinder">
+                <div class="product-info">
+                    <h3 class="product-title">Table Top Wet Grinder</h3>
+                    <p class="product-price">₹3,800</p>
+                    <p class="product-desc">2-Litre capacity with cylindrical stones for smooth grinding.</p>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="mixer.png" alt="Mixer Grinder">
+                <div class="product-info">
+                    <h3 class="product-title">Powerful Mixer Grinder</h3>
+                    <p class="product-price">₹3,200</p>
+                    <p class="product-desc">750W motor with 3 stainless steel jars for all kitchen needs.</p>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="cooker 5l.png" alt="Prestige Cooker" onerror="this.src='cooker.png'">
+                <div class="product-info">
+                    <h3 class="product-title">Prestige Cooker</h3>
+                    <p class="product-price">₹1,999</p>
+                    <p class="product-desc">Durable and safe pressure cooker for your daily fast cooking needs.</p>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="induction cooktop.jpg" alt="Prestige Cooktop">
+                <div class="product-info">
+                    <h3 class="product-title">Prestige Cooktop</h3>
+                    <p class="product-price">₹2,450</p>
+                    <p class="product-desc">Digital display with multiple preset cooking menus and auto-off.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="all-products" class="products-section" style="background-color: #eef2f5;">
+        <h2 class="section-title">All Products</h2>
+
+        <div id="mixers-preethi"
+            style="max-width: 1200px; margin: 0 auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
+            <h3
+                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+                Mixers > Preethi</h3>
+        </div>
+
+        <div class="product-grid"
+            style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); justify-content: start;">
+            <div class="product-card">
+                <img src="preethi.jpg" alt="Preethi Zodiac Mixer Grinder" onerror="this.src='mixer.png'">
+                <div class="product-info" style="text-align: left;">
+                    <h3 class="product-title">Preethi Zodiac Mixer Grinder</h3>
+                    <p class="product-price">₹8,499</p>
+                    <p class="product-desc">Powerful 750W motor with 5 jars, including a Master Chef Plus jar for
+                        slicing, grating, and dough kneading.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="mixers-prestige"
+            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
+            <h3
+                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+                Mixers > Prestige</h3>
+        </div>
+
+        <div class="product-grid"
+            style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); justify-content: start;">
+            <div class="product-card">
+                <img src="prestage mixer.webp" alt="Prestige Mixer Grinder" onerror="this.src='mixer.png'">
+                <div class="product-info" style="text-align: left;">
+                    <h3 class="product-title">Prestige Endura PRO Mixer Grinder</h3>
+                    <p class="product-price">₹6,250</p>
+                    <p class="product-desc">1000W Heavy Duty Motor with 6 jars including a juicer extractor. Perfect for
+                        tough grinding tasks.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRINDERS SECTION -->
+        <div id="grinders-ultra"
+            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
+            <h3
+                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+                Grinders > Ultra</h3>
+        </div>
+
+        <div class="product-grid"
+            style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); justify-content: start;">
+            <div class="product-card">
+                <img src="grinder.png" alt="Ultra Wet Grinder" onerror="this.src='grinder.png'">
+                <div class="product-info" style="text-align: left;">
+                    <h3 class="product-title">Ultra Perfect+ Wet Grinder</h3>
+                    <p class="product-price">₹8,990</p>
+                    <p class="product-desc">2-Litre capacity with precise conical stones for soft idli batters and ABS
+                        body.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- COOKERS SECTION -->
+        <div id="cookers-prestige"
+            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
+            <h3
+                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+                Cookers > Prestige</h3>
+        </div>
+
+        <div class="product-grid"
+            style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); justify-content: start;">
+            <div class="product-card">
+                <img src="cooker 5l.png" alt="Prestige Cooker" onerror="this.src='cooker.png'">
+                <div class="product-info" style="text-align: left;">
+                    <h3 class="product-title">Prestige Stainless Steel Cooker</h3>
+                    <p class="product-price">
+                        <del style="color: #999; font-size: 0.85em; margin-right: 6px;">₹1,999</del>
+                        <span class="current-price">₹1,000</span>
+                    </p>
+                    <p class="product-desc">Durable and safe pressure cooker for your daily fast cooking needs. High
+                        quality stainless steel body.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="cookers-ganga"
+            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
+            <h3
+                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+                Cookers > Ganga</h3>
+        </div>
+
+        <div class="product-grid"
+            style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); justify-content: start;">
+            <div class="product-card">
+                <img src="ganga_cooker.jpg" alt="Ganga Cooker" onerror="this.src='cooker.png'">
+                <div class="product-info" style="text-align: left;">
+                    <h3 class="product-title">Ganga Cooker</h3>
+                    <p class="product-price">₹1,000</p>
+                    <p class="product-desc">Reliable and affordable Ganga pressure cooker for your everyday cooking
+                        needs.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAS STOVE SECTION -->
+        <div id="gas-stove-preethi"
+            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
+            <h3
+                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+                Gas Stove > Preethi</h3>
+        </div>
+
+        <div class="product-grid"
+            style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); justify-content: start;">
+            <div class="product-card">
+                <img src="preethi_gas_stove.jpg" alt="Preethi Gas Stove" onerror="this.src='preethi_gas_stove.jpg'">
+                <div class="product-info" style="text-align: left;">
+                    <h3 class="product-title">Preethi 3-Burner Glass Top Gas Stove</h3>
+                    <p class="product-price">₹4,500</p>
+                    <p class="product-desc">Toughened glass top with high-efficiency brass burners. Elegant black design
+                        for modern kitchens.</p>
+                </div>
+            </div>
+        </div>
+        <div id="gas-stove-prestige"
+            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
+            <h3
+                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+                Gas Stove > Prestige</h3>
+        </div>
+
+        <div class="product-grid"
+            style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); justify-content: start;">
+            <div class="product-card">
+                <img src="prestige_gas_stove.jpg" alt="Prestige Gas Stove" onerror="this.src='gas stove.jpg'">
+                <div class="product-info" style="text-align: left;">
+                    <h3 class="product-title">Prestige 2-Burner Gas Stove</h3>
+                    <p class="product-price">₹2,000</p>
+                    <p class="product-desc">Sleek and compact Prestige gas stove perfect for smart modular kitchens.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <h2 class="section-title">Visit Us</h2>
+        <div class="contact-grid">
+            <div class="contact-card">
+                <h3>Call Us</h3>
+                <p><a href="tel:1234567890" class="contact-link">+91 12345 67890</a></p>
+                <p style="margin-top: 10px; color: #555;"><strong>Monday to Saturday:</strong><br>10:00 AM to 9:00 PM
+                </p>
+            </div>
+            <div class="contact-card">
+                <h3>Service Information</h3>
+                <p><a href="tel:0987654321" class="contact-link">09876 54321</a></p>
+                <p style="margin-top: 10px; color: #555;"><strong>Support & Repairs:</strong><br>Available during store
+                    hours
+                </p>
+            </div>
+            <div class="contact-card">
+                <h3>Store Location</h3>
+                <p style="color: #555;">Main Road, Rajahmundry,<br>Andhra Pradesh</p>
+                <div style="margin-top: 15px;">
+                    <iframe
+                        src="https://maps.google.com/maps?q=Rajahmundry,%20Andhra%20Pradesh&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        width="100%" height="150" style="border:0; border-radius: 8px;" allowfullscreen=""
+                        loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="position: relative;">
+        <p>© 2026 Bhagyalakshmi Home Needs. All rights reserved.</p>
+        <a href="admin.html"
+            style="position: absolute; right: 20px; bottom: 20px; color: #aaa; text-decoration: none; font-size: 0.8em; opacity: 0.5;">Admin</a>
+    </footer>
+
+    <script src="script.js"></script>
+
+    <!-- Chatbot UI Widget -->
+    <div class="chat-widget">
+        <div class="chat-button" id="chatButton" aria-label="Open Chat">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+            </svg>
+        </div>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h3>Store Assistant (AI)</h3>
+                <button class="close-chat" id="closeChat">&times;</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    Hi! I'm the Bhagyalakshmi Home Needs virtual assistant. How can I help you find the perfect
+                    appliance today?
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+                <button class="send-button" id="sendButton">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

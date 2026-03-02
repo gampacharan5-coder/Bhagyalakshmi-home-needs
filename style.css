@@ -1,0 +1,119 @@
+/* Animated Cover Page Styling */
+.animated-hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    overflow: hidden;
+    background-color: #ffffff; /* White base to match your product images */
+}
+
+/* Scrolling Background Logic */
+.scrolling-wrapper {
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+}
+
+.scrolling-track {
+    display: flex;
+    align-items: center;
+    width: 200%; /* Double width to hold the duplicated images */
+    /* This moves the track infinitely to the right */
+    animation: scrollRight 20s linear infinite; 
+}
+
+.scroll-img {
+    width: 16.66%; /* Fits 6 images perfectly into the 200% track */
+    max-height: 60vh;
+    object-fit: contain;
+    padding: 0 40px; /* Gives some breathing room between products */
+}
+
+/* The Keyframes for Sliding Right */
+@keyframes scrollRight {
+    /* We start shifted left and move to zero to create rightward motion */
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+}
+
+/* Semi-transparent overlay so the text pops */
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Darkens the images slightly */
+    z-index: 2;
+}
+
+/* Hero Content Styling & Animations */
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.hero-content h1 {
+    font-size: 52px;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    opacity: 0;
+    animation: slideDown 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.hero-content .highlight { color: var(--secondary-color); }
+
+.hero-content p {
+    font-size: 20px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: slideUp 1s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards;
+}
+
+.hero-content .btn {
+    display: inline-block;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    background-color: var(--primary-color);
+    text-decoration: none;
+    border-radius: 30px;
+    opacity: 0;
+    animation: popIn 0.6s ease 1s forwards, floatButton 3s ease-in-out infinite 1.6s;
+    transition: background-color 0.3s ease;
+}
+
+.hero-content .btn:hover { background-color: #b71c1c; }
+
+/* Text & Button Keyframes */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.5); }
+    70% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes floatButton {
+    0% { transform: translateY(0); box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4); }
+    50% { transform: translateY(-10px); box-shadow: 0 15px 25px rgba(211, 47, 47, 0.6); }
+    100% { transform: translateY(0); box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4); }
+}

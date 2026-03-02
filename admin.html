@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Using the same core font as index.html -->
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- Simple Login Modal -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Admin Login</h2>
+            <p>Please enter the admin passcode to access this panel.</p>
+            <input type="password" id="admin-password" placeholder="Passcode (hint: admin123)">
+            <button id="login-btn">Login</button>
+            <p id="login-error" style="color: red; display: none; margin-top: 10px; font-size: 0.9em;">Incorrect
+                passcode.</p>
+            <a href="index.html" class="back-link">Return to Store</a>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="admin-dashboard" class="dashboard-container" style="display: none;">
+        <header class="admin-header">
+            <h1>Store Manager <span>Admin</span></h1>
+            <a href="index.html" class="logout-btn">Back to Store</a>
+        </header>
+
+        <main class="dashboard-content">
+            <section class="add-product-section">
+                <h2>Add New Product</h2>
+                <form id="product-form" class="product-form">
+                    <div class="form-group">
+                        <label for="prod-name">Product Title</label>
+                        <input type="text" id="prod-name" required placeholder="e.g. Prestige Deluxe Cooker">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="prod-category">Category</label>
+                            <select id="prod-category" required>
+                                <option value="" disabled selected>Select a Product Category</option>
+                                <optgroup label="Mixer">
+                                    <option value="mixers-preethi">Preethi</option>
+                                    <option value="mixers-prestige">Prestige</option>
+                                    <option value="mixers-ultra">Ultra</option>
+                                    <option value="mixers-ganga">Ganga</option>
+                                    <option value="mixers-electron">Electron</option>
+                                </optgroup>
+                                <optgroup label="Grinder">
+                                    <option value="grinders-ultra">Ultra</option>
+                                    <option value="grinders-prestige">Prestige</option>
+                                    <option value="grinders-preethi">Preethi</option>
+                                    <option value="grinders-lakshmi">Lakshmi</option>
+                                </optgroup>
+                                <optgroup label="Cookers">
+                                    <option value="cookers-prestige">Prestige</option>
+                                    <option value="cookers-butterfly">Butterfly</option>
+                                    <option value="cookers-ganga">Ganga</option>
+                                </optgroup>
+                                <optgroup label="Fans">
+                                    <option value="fans-crompton">Crompton</option>
+                                    <option value="fans-havells">Havells</option>
+                                </optgroup>
+                                <optgroup label="Blenders">
+                                    <option value="blenders-prestige">Prestige</option>
+                                    <option value="blenders-panasonic">Panasonic</option>
+                                    <option value="blenders-mexican">Mexican</option>
+                                </optgroup>
+                                <optgroup label="Gas Stove">
+                                    <option value="gas-stove-preethi">Preethi</option>
+                                    <option value="gas-stove-prestige">Prestige</option>
+                                    <option value="gas-stove-ganga">Ganga</option>
+                                    <option value="gas-stove-butterfly">Butterfly</option>
+                                </optgroup>
+                                <optgroup label="Water Filters">
+                                    <option value="water-filters-kent">Kent</option>
+                                    <option value="water-filters-pure-it">Pure It</option>
+                                    <option value="water-filters-aquaguard">Aquaguard</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group half">
+                            <label for="prod-image">Product Image</label>
+                            <input type="file" id="prod-image" accept="image/png, image/jpeg, image/jpg" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="prod-orig-price">Original Price (₹)</label>
+                            <input type="number" id="prod-orig-price" required placeholder="1999" min="0">
+                        </div>
+                        <div class="form-group half">
+                            <label for="prod-offer-price">Offer Price (₹) [Optional]</label>
+                            <input type="number" id="prod-offer-price" placeholder="1000" min="0">
+                            <small>Leave empty if no offer exists</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prod-desc">Description & Specifications</label>
+                        <textarea id="prod-desc" rows="3" required placeholder="Durable, safe, efficient..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="save-product-btn">Add Product to Store</button>
+                    <p id="success-msg" style="color: green; display: none; margin-top: 10px; font-weight: bold;">
+                        Product added successfully!</p>
+                </form>
+            </section>
+
+            <section class="manage-inventory-section">
+                <h2>Custom Added Products</h2>
+                <div id="custom-products-list" class="custom-products-grid">
+                    <!-- Javascript will load custom products here to easily delete them -->
+                </div>
+            </section>
+            <section class="add-category-section"
+                style="margin-top: 40px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <h2 style="margin-bottom: 25px; padding-bottom: 10px; border-bottom: 2px solid #eee; color: #444;">Add
+                    Custom Menu / Company</h2>
+                <form id="category-form" class="product-form">
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="new-menu-name">Main Menu (e.g. Heaters, Fans)</label>
+                            <input type="text" id="new-menu-name" required placeholder="Main Menu Name">
+                        </div>
+                        <div class="form-group half">
+                            <label for="new-brand-name">Company / Brand (e.g. Bajaj)</label>
+                            <input type="text" id="new-brand-name" required placeholder="Company Name">
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn" style="background-color: #2196F3;">Add to Navigation
+                        Menu</button>
+                    <p id="cat-success-msg" style="color: green; display: none; margin-top: 10px; font-weight: bold;">
+                        Menu added successfully! It is now available in the dropdown.</p>
+                </form>
+
+                <div id="custom-categories-list" style="margin-top: 20px;">
+                    <!-- Javascript will load custom categories here to easily delete them -->
+                </div>
+            </section>
+
+            <section class="add-slider-section"
+                style="grid-column: 1 / -1; margin-top: 40px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <h2 style="margin-bottom: 25px; padding-bottom: 10px; border-bottom: 2px solid #eee; color: #444;">
+                    Homepage Customization</h2>
+
+                <div style="display: flex; gap: 40px;">
+                    <!-- Top Announcement Bar -->
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 15px; color: #2196F3;">Special Offers Banner</h3>
+                        <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">This text will scroll across the
+                            very top of your website.</p>
+                        <form id="offer-banner-form" class="product-form">
+                            <div class="form-group">
+                                <label for="offer-text">Banner Text</label>
+                                <input type="text" id="offer-text"
+                                    placeholder="e.g. 🌟 DIWALI MEGA SALE: 50% OFF ON ALL GRINDERS! 🌟">
+                            </div>
+                            <button type="submit" class="submit-btn" style="background-color: #2196F3;">Save
+                                Banner</button>
+                            <button type="button" id="clear-banner-btn" class="delete-btn"
+                                style="margin-top: 10px; width: 100%;">Clear Banner (Hide)</button>
+                            <p id="banner-msg"
+                                style="color: green; display: none; margin-top: 10px; font-weight: bold;">Banner updated
+                                successfully!</p>
+                        </form>
+                    </div>
+
+                    <!-- Hero Slider -->
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 15px; color: #2196F3;">Add Hero Slide</h3>
+                        <p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">Upload images to display in the
+                            main scrolling banner on the homepage. Wide images look best.</p>
+                        <form id="slider-form" class="product-form">
+                            <div class="form-group">
+                                <label for="slide-image">Select Slide Image</label>
+                                <input type="file" id="slide-image" accept="image/png, image/jpeg, image/jpg" required>
+                            </div>
+                            <button type="submit" class="submit-btn" style="background-color: #ff9800;">Add Slide to
+                                Homepage</button>
+                            <p id="slide-msg" style="color: green; display: none; margin-top: 10px; font-weight: bold;">
+                                Slide added successfully!</p>
+                        </form>
+
+                        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #555;">Current Slides</h4>
+                        <div id="custom-slides-list" class="custom-products-grid"
+                            style="display: flex; flex-direction: column; gap: 10px;">
+                            <!-- JS will load slides here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="manage-default-section"
+                style="grid-column: 1 / -1; margin-top: 40px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <h2 style="margin-bottom: 25px; padding-bottom: 10px; border-bottom: 2px solid #eee; color: #444;">Live
+                    Storefront (Built-in Products & Categories)</h2>
+                <p style="margin-bottom: 15px; color: #666;">These items are hardcoded into the original store. You
+                    cannot permanently delete them, but you can <strong>Hide</strong> them from appearing on the
+                    customer's page.</p>
+
+                <div style="display: flex; gap: 40px;">
+                    <!-- Default Categories Column -->
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 15px; color: #d32f2f;">Categories / Brands</h3>
+                        <div id="default-categories-list" class="custom-products-grid">
+                            <!-- JS will load predefined categories here with toggle buttons -->
+                        </div>
+                    </div>
+
+                    <!-- Default Products Column -->
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 15px; color: #d32f2f;">Products</h3>
+                        <div id="default-products-list" class="custom-products-grid">
+                            <!-- JS will load predefined products here with toggle buttons -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>
