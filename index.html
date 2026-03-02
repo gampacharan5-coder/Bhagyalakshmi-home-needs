@@ -792,42 +792,43 @@
             }
 
             .logo {
-                font-size: 18px;
-                /* Specifically shrunk so 'Bhagyalakshmi' fits on phones */
+                font-size: 16px;
                 flex-grow: 1;
                 white-space: normal;
-                /* Allow wrapping if absolutely necessary, but strictly within its bounds */
                 line-height: 1.2;
+                word-wrap: break-word;
+                /* Force break if it still doesn't fit */
+                max-width: 75%;
+                /* Ensure it absolutely never pushes the hamburger button away */
             }
 
             .menu-toggle {
                 display: block;
                 padding: 10px;
-                /* Bigger tap target for the hamburger */
                 background-color: #f9f9f9;
                 border-radius: 4px;
+                z-index: 1002;
+                /* Ensure it stays above everything */
             }
 
             .nav-links {
-                display: none;
+                display: none !important;
+                /* Hide absolutely everything in nav links by default */
                 flex-direction: column;
                 width: 100%;
                 gap: 5px;
                 background-color: #fff;
                 padding-bottom: 20px;
                 margin-top: 15px;
-                /* Push it definitely below the header row */
                 position: absolute;
-                /* Absolute positioning so it drops DOWN over the hero */
                 top: 100%;
                 left: 0;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                /* Give dropdown a shadow */
                 z-index: 1000;
             }
 
-            .nav-links.active {
-                display: flex;
+            ul.nav-links.active {
+                display: flex !important;
             }
 
             .nav-links>li {
@@ -903,17 +904,21 @@
             }
 
             .hero {
-                padding: 60px 20px 40px 20px;
-                /* Huge top padding so absolute header doesn't cover it */
+                padding: 60px 10px 40px 10px;
+                /* Reduced side padding explicitly for narrow screens */
                 min-height: 50vh;
                 /* Give hero room to breathe */
             }
 
             .hero h1 {
-                font-size: 32px;
-                /* Re-adjusted hero size */
+                font-size: 24px;
+                /* Aggressively shrank hero size */
                 line-height: 1.3;
                 margin-bottom: 15px;
+                word-wrap: break-word;
+                /* Let long words split */
+                overflow-wrap: break-word;
+                padding: 0 5px;
             }
 
             .hero p {
