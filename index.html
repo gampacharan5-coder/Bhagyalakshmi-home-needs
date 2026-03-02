@@ -782,13 +782,14 @@
             header {
                 flex-direction: row;
                 flex-wrap: nowrap;
-                /* Force them to stay on one line */
                 justify-content: space-between;
                 align-items: center;
                 padding: 15px;
                 position: relative;
                 position: sticky;
                 top: 0;
+                z-index: 9999;
+                /* Absolute guarantee that nothing transparent covers the button */
             }
 
             .logo {
@@ -956,9 +957,9 @@
             }
 
             .product-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
-                padding: 0 10px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 0 5px;
             }
 
             .chat-window {
@@ -973,34 +974,35 @@
             }
 
             .section-title {
-                font-size: 24px;
+                font-size: 20px;
                 /* Shrank massive section headers */
                 margin-bottom: 20px;
             }
 
             .contact h2.section-title {
-                font-size: 28px;
+                font-size: 22px;
             }
 
             .product-info {
-                padding: 15px;
+                padding: 10px;
             }
 
             .product-info h3 {
-                font-size: 16px;
+                font-size: 13px;
                 /* Shrink product names */
                 margin-bottom: 5px;
-                line-height: 1.3;
+                line-height: 1.2;
             }
 
             .product-info .price {
-                font-size: 16px;
+                font-size: 14px;
                 /* Shrink price tag */
             }
 
             .product-info p {
-                font-size: 13px;
+                font-size: 11px;
                 /* Shrink subtext */
+                margin-bottom: 10px;
             }
 
             .contact-card {
@@ -1008,13 +1010,13 @@
             }
 
             .contact-card h3 {
-                font-size: 18px;
+                font-size: 16px;
                 /* Shrink contact headers like 'Call Us' */
                 margin-bottom: 10px;
             }
 
             .contact-card p {
-                font-size: 15px;
+                font-size: 14px;
                 /* Shrink phone numbers */
             }
         }
@@ -1025,7 +1027,8 @@
 
     <header>
         <div class="logo">Bhagyalakshmi Home Needs</div>
-        <button class="menu-toggle" aria-label="Toggle navigation">
+        <button class="menu-toggle" aria-label="Toggle navigation"
+            onclick="document.querySelector('.nav-links').classList.toggle('active')">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -1034,7 +1037,7 @@
             </svg>
         </button>
         <ul class="nav-links">
-            <li><a href="#top">Home</a></li>
+            <li><a href="#top" onclick="document.querySelector('.nav-links').classList.remove('active')">Home</a></li>
             <li class="dropdown">
                 <a href="javascript:void(0);">Our Products ▼</a>
                 <div class="dropdown-content" id="main-dropdown-content">
