@@ -11,21 +11,90 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- Dynamic Offers Banner ---
-    const offerText = localStorage.getItem('storeOfferBannerText');
-    if (offerText) {
-        // Create the banner element
-        const banner = document.createElement('div');
-        banner.style.cssText = "background-color: #ff9800; color: #fff; text-align: center; padding: 10px; font-weight: bold; overflow: hidden; white-space: nowrap;";
+    // --- Unified Rendering Engine ---
+    function createProductCard(p, index) {
+        let priceHtml = `₹${p.price}`;
+        if (p.origPrice) {
+            priceHtml = `<del style="color:#999; font-size:0.85em; margin-right:6px;">₹${p.origPrice}</del> <span class="current-price">₹${p.price}</span>`;
+        }
 
-        // Make it marquee/scroll
-        const marquee = document.createElement('marquee');
-        marquee.scrollAmount = 8;
-        marquee.textContent = offerText;
-        banner.appendChild(marquee);
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.id = `prod-${p.id || 'custom-' + index}`;
 
-        // Insert it as the very first element in the body
-        document.body.insertBefore(banner, document.body.firstChild);
+        card.innerHTML = `
+            <img src="${p.image}" alt="${p.title}" onerror="this.src='mixer.png'">
+            <div class="product-info" style="text-align: left;">
+                <h3 class="product-title">${p.title}</h3>
+                <p class="product-price">${priceHtml}</p>
+                <p class="product-desc">${p.desc || ''}</p>
+            </div>
+        `;
+        return card;
+    }
+
+    function renderProducts() {
+        const premiumGrid = document.getElementById('premium-products-grid');
+        const dynamicContainer = document.getElementById('all-products-dynamic-container');
+
+        const customProducts = JSON.parse(localStorage.getItem('customStoreProducts') || '[]');
+        const hiddenProducts = JSON.parse(localStorage.getItem('hiddenStoreProducts') || '[]');
+        const hiddenCategories = JSON.parse(localStorage.getItem('hiddenStoreCategories') || '[]');
+
+        // 1. Render Premium/Featured Collection
+        if (premiumGrid) {
+            premiumGrid.innerHTML = '';
+            const featured = PRODUCTS_DATA.filter(p => p.featured && !hiddenProducts.includes(p.title));
+            featured.forEach((p, idx) => {
+                premiumGrid.appendChild(createProductCard(p, idx));
+            });
+        }
+
+        // 2. Render All Products Page Content
+        if (dynamicContainer) {
+            dynamicContainer.innerHTML = '';
+
+            // Combine permanent and custom products
+            const allItems = [...PRODUCTS_DATA, ...customProducts];
+
+            // Group by category
+            const categories = {};
+            allItems.forEach(p => {
+                if (hiddenProducts.includes(p.title) || hiddenCategories.includes(p.category)) return;
+
+                if (!categories[p.category]) categories[p.category] = [];
+                categories[p.category].push(p);
+            });
+
+            // Render each category
+            for (const [catId, products] of Object.entries(categories)) {
+                const section = document.createElement('section');
+                section.className = 'products-section';
+                section.style.backgroundColor = '#eef2f5';
+
+                let displayTitle = catId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                const customCat = JSON.parse(localStorage.getItem('customStoreCategories') || '[]').find(c => c.id === catId);
+                if (customCat) displayTitle = customCat.displayName;
+
+                section.innerHTML = `
+                    <div id="${catId}" style="max-width: 1200px; margin: 0 auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
+                        <h2 class="section-title" style="text-align: left; margin-bottom: 10px; border-bottom: 2px solid #ddd; padding-bottom: 10px;">${displayTitle}</h2>
+                    </div>
+                    <div class="product-grid"></div>
+                `;
+
+                const grid = section.querySelector('.product-grid');
+                products.forEach((p, idx) => {
+                    grid.appendChild(createProductCard(p, idx));
+                });
+
+                dynamicContainer.appendChild(section);
+            }
+        }
+    }
+
+    if (typeof PRODUCTS_DATA !== 'undefined') {
+        renderProducts();
     }
 
     // --- Dynamic Hero Slider ---
@@ -33,17 +102,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (customSlides.length > 0) {
         const scrollingTrack = document.querySelector('.scrolling-track');
         if (scrollingTrack) {
-            // Empty the default hardcoded static images
             scrollingTrack.innerHTML = '';
-
-            // Generate the track twice for seamless infinite scrolling, just like the original HTML
             for (let i = 0; i < 2; i++) {
                 customSlides.forEach(slide => {
                     const img = document.createElement('img');
                     img.src = slide.image;
                     img.className = 'scroll-img';
                     img.alt = 'Custom Hero Slide';
-                    // Optional styling if the user didn't upload identical dimensions
                     img.style.objectFit = 'cover';
                     scrollingTrack.appendChild(img);
                 });
@@ -52,12 +117,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- Dynamic Custom Navigation Categories Loader ---
-    const customCategories = JSON.parse(localStorage.getItem('customStoreCategories') || '[]');
+    const customCategoriesData = JSON.parse(localStorage.getItem('customStoreCategories') || '[]');
     const mainDropdownContent = document.getElementById('main-dropdown-content');
 
     if (mainDropdownContent) {
-        customCategories.forEach(cat => {
-            // Find existing submenu by its Title
+        customCategoriesData.forEach(cat => {
             let targetSubmenu = null;
             const allSubmenus = mainDropdownContent.querySelectorAll('.dropdown-submenu');
             allSubmenus.forEach(sub => {
@@ -67,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // If it doesn't exist, create a new top-level sub-menu block inside Our Products
             if (!targetSubmenu) {
                 targetSubmenu = document.createElement('div');
                 targetSubmenu.className = 'dropdown-submenu';
@@ -78,10 +141,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 mainDropdownContent.appendChild(targetSubmenu);
             }
 
-            // Append the new brand link
             const submenuContent = targetSubmenu.querySelector('.dropdown-submenu-content');
             if (submenuContent) {
-                // Ensure we don't accidentally add duplicates if it's somehow run multiple times
                 if (!submenuContent.querySelector(`a[href="#${cat.id}"]`)) {
                     const brandLink = document.createElement('a');
                     brandLink.href = `#${cat.id}`;
@@ -92,92 +153,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- Dynamic Custom Products Loader ---
-    const customProducts = JSON.parse(localStorage.getItem('customStoreProducts') || '[]');
-    customProducts.forEach(p => {
-        let sectionHeading = document.getElementById(p.category);
-        let gridToAppend = null;
-
-        // If the section doesn't exist in the HTML yet (because it's a brand new custom category)
-        if (!sectionHeading) {
-            sectionHeading = document.createElement('div');
-            sectionHeading.id = p.category;
-            sectionHeading.style.cssText = "max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;";
-
-            // Use saved categoryDisplayName or fallback to ID
-            const headingTitle = p.categoryDisplayName || p.category.replace(/-/g, ' ');
-            sectionHeading.innerHTML = `<h3 style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">${headingTitle}</h3>`;
-
-            gridToAppend = document.createElement('div');
-            gridToAppend.className = 'product-grid';
-
-
-            // Append it to the main 'All Products' bucket
-            const allProductsContainer = document.getElementById('all-products') || document.querySelector('.products-section');
-            if (allProductsContainer) {
-                allProductsContainer.appendChild(sectionHeading);
-                allProductsContainer.appendChild(gridToAppend);
-            }
-        }
-        // If it existing, find the adjacent grid
-        else if (sectionHeading.nextElementSibling && sectionHeading.nextElementSibling.classList.contains('product-grid')) {
-            gridToAppend = sectionHeading.nextElementSibling;
-        }
-
-        if (gridToAppend) {
-            let priceHtml = `₹${p.origPrice}`;
-            if (p.offerPrice) {
-                priceHtml = `<del style="color:#999; font-size:0.85em; margin-right:6px;">₹${p.origPrice}</del> <span class="current-price">₹${p.offerPrice}</span>`;
-            }
-
-            const newCard = document.createElement('div');
-            newCard.className = 'product-card';
-            newCard.innerHTML = `
-                <img src="${p.image}" alt="${p.title}" onerror="this.src='cooker.png'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">${p.title}</h3>
-                    <p class="product-price">${priceHtml}</p>
-                    <p class="product-desc">${p.desc}</p>
-                </div>
-            `;
-            gridToAppend.appendChild(newCard);
-        }
-    });
-    // --------------------------------------
-
-    // --- Hide Default Items (Admin Configured) ---
-    const hiddenCategories = JSON.parse(localStorage.getItem('hiddenStoreCategories') || '[]');
-    hiddenCategories.forEach(catId => {
-        // Hide the section header div
-        const sectionDiv = document.getElementById(catId);
-        if (sectionDiv) {
-            sectionDiv.style.display = 'none';
-            // Also hide the adjacent product grid for that category
-            if (sectionDiv.nextElementSibling && sectionDiv.nextElementSibling.classList.contains('product-grid')) {
-                sectionDiv.nextElementSibling.style.display = 'none';
-            }
-        }
-
-        // Hide from dropdown menu navigation
-        const navLink = document.querySelector(`a[href="#${catId}"]`);
-        if (navLink) navLink.style.display = 'none';
-    });
-
-    const hiddenProducts = JSON.parse(localStorage.getItem('hiddenStoreProducts') || '[]');
-    if (hiddenProducts.length > 0) {
-        const allProductCards = document.querySelectorAll('.product-card');
-        allProductCards.forEach(card => {
-            const titleEl = card.querySelector('.product-title');
-            if (titleEl) {
-                // If the title contains any of the hidden terms (e.g. '3-Burner Gas Stove')
-                const shouldHide = hiddenProducts.some(term => titleEl.textContent.includes(term));
-                if (shouldHide) {
-                    card.style.display = 'none';
-                    // We also add a custom class so the AI Chatbot scraper knows to skip it
-                    card.classList.add('admin-hidden-product');
-                }
-            }
-        });
+    // --- Dynamic Offers Banner ---
+    const offerText = localStorage.getItem('storeOfferBannerText');
+    if (offerText) {
+        const banner = document.createElement('div');
+        banner.style.cssText = "background-color: #ff9800; color: #fff; text-align: center; padding: 10px; font-weight: bold; overflow: hidden; white-space: nowrap;";
+        const marquee = document.createElement('marquee');
+        marquee.scrollAmount = 8;
+        marquee.textContent = offerText;
+        banner.appendChild(marquee);
+        document.body.insertBefore(banner, document.body.firstChild);
     }
     // ---------------------------------------------
 
@@ -215,116 +200,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.filterProducts = function () {
         clearTimeout(searchDebounceTimer);
-        searchDebounceTimer = setTimeout(async () => {
+        searchDebounceTimer = setTimeout(() => {
             const searchInput = document.getElementById('navSearchInput');
             const dropdown = document.getElementById('searchResultsDropdown');
             if (!searchInput || !dropdown) return;
 
             const searchTerm = searchInput.value.toLowerCase().trim();
-
-            // Clear previous results
             dropdown.innerHTML = '';
+
             if (searchTerm.length === 0) {
                 dropdown.classList.remove('active');
-                if (globalNavProductCards.length > 0) {
-                    globalNavProductCards.forEach(card => card.style.display = 'block');
-                }
                 return;
             }
 
-            if (globalNavProductCards.length === 0) {
-                let cards = Array.from(document.querySelectorAll('.product-card'));
-                if (cards.length > 0) {
-                    globalNavProductCards = cards;
-                } else {
-                    try {
-                        const response = await fetch('all-products.html');
-                        const text = await response.text();
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(text, 'text/html');
-                        globalNavProductCards = Array.from(doc.querySelectorAll('.product-card'));
-                    } catch (e) {
-                        globalNavProductCards = [];
-                    }
-                }
-            }
+            const customProducts = JSON.parse(localStorage.getItem('customStoreProducts') || '[]');
+            const hiddenProducts = JSON.parse(localStorage.getItem('hiddenStoreProducts') || '[]');
 
-            const productCards = globalNavProductCards;
-            dropdown.innerHTML = '';
+            // Combine and filter
+            const allItems = [...PRODUCTS_DATA, ...customProducts].filter(p => !hiddenProducts.includes(p.title));
+            const results = allItems.filter(p => p.title.toLowerCase().includes(searchTerm));
 
-            let hasResults = false;
-            const seenTitles = new Set();
-
-            productCards.forEach((card, index) => {
-                const titleEl = card.querySelector('.product-title');
-                const priceEl = card.querySelector('.product-price');
-                const imgEl = card.querySelector('img');
-
-                const title = titleEl ? titleEl.textContent : '';
-                const price = priceEl ? priceEl.textContent : '';
-                const imgSrc = imgEl ? imgEl.src : '';
-
-                if (!card.id) {
-                    card.id = 'product-' + index + '-' + title.replace(/\s+/g, '-').toLowerCase();
-                }
-
-                if (!seenTitles.has(title) && title.toLowerCase().includes(searchTerm)) {
-                    hasResults = true;
-                    seenTitles.add(title);
-
+            if (results.length === 0) {
+                dropdown.innerHTML = `<div class="search-no-results">No products found for "${searchTerm}"</div>`;
+            } else {
+                results.forEach((p, idx) => {
                     const itemDiv = document.createElement('a');
                     const isAllProd = window.location.pathname.includes('all-products.html');
-                    itemDiv.href = (isAllProd ? '' : 'all-products.html') + '#' + card.id;
+                    const anchorId = `prod-${p.id || 'custom-' + idx}`;
+                    itemDiv.href = (isAllProd ? '' : 'all-products.html') + '#' + anchorId;
                     itemDiv.className = 'search-result-item';
 
                     itemDiv.addEventListener('click', (e) => {
-                        const isAllProd = window.location.pathname.includes('all-products.html');
-                        if (!isAllProd) return;
+                        if (!isAllProd) return; // Allow navigation to work naturally
 
                         e.preventDefault();
                         dropdown.classList.remove('active');
                         searchInput.value = '';
 
-                        const headerOffset = 80;
-                        const elementPosition = card.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        const targetCard = document.getElementById(anchorId);
+                        if (targetCard) {
+                            const headerOffset = 80;
+                            const elementPosition = targetCard.getBoundingClientRect().top;
+                            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
 
-                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-
-                        const originalBg = card.style.backgroundColor;
-                        card.style.transition = 'background-color 0.5s ease';
-                        card.style.backgroundColor = '#fff3e0';
-
-                        setTimeout(() => {
-                            card.style.backgroundColor = originalBg;
-                        }, 1500);
+                            const originalBg = targetCard.style.backgroundColor;
+                            targetCard.style.transition = 'background-color 0.5s ease';
+                            targetCard.style.backgroundColor = '#fff3e0';
+                            setTimeout(() => { targetCard.style.backgroundColor = originalBg; }, 1500);
+                        }
                     });
 
                     itemDiv.innerHTML = `
-                        <img src="${imgSrc}" class="search-result-img" alt="${title}">
+                        <img src="${p.image}" class="search-result-img" alt="${p.title}" onerror="this.src='mixer.png'">
                         <div class="search-result-info">
-                            <span class="search-result-title">${title}</span>
-                            <span class="search-result-price">${price}</span>
+                            <span class="search-result-title">${p.title}</span>
+                            <span class="search-result-price">₹${p.price}</span>
                         </div>
                     `;
                     dropdown.appendChild(itemDiv);
-                }
-            });
-
-            if (!hasResults) {
-                dropdown.innerHTML = '<div class="search-no-results">No products found for "' + searchTerm + '"</div>';
+                });
             }
 
             dropdown.classList.add('active');
 
-            // Mobile Fix: Scroll the navigation menu to top so results are visible
             if (window.innerWidth <= 768) {
                 const navLinks = document.querySelector('.nav-links');
-                if (navLinks) {
-                    navLinks.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+                if (navLinks) navLinks.scrollTo({ top: 0, behavior: 'smooth' });
             }
-        }, 300); // 300ms debounce
+        }, 300);
     };
 
     // Close dropdown when clicking outside

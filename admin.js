@@ -365,22 +365,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'induction-cooktops', name: 'Induction Cooktops' }
     ];
 
-    const defaultProductsList = [
-        { name: '3-Burner Gas Stove (Premium)', identifyTerm: '3-Burner Gas Stove' },
-        { name: 'Table Top Wet Grinder (Premium)', identifyTerm: 'Table Top Wet Grinder' },
-        { name: 'Powerful Mixer Grinder (Premium)', identifyTerm: 'Powerful Mixer Grinder' },
-        { name: 'Prestige Cooker (Premium)', identifyTerm: 'Prestige Cooker' },
-        { name: 'Prestige Cooktop (Premium)', identifyTerm: 'Prestige Cooktop' },
-        { name: 'Preethi Zodiac Mixer Grinder', identifyTerm: 'Preethi Zodiac Mixer Grinder' },
-        { name: 'Prestige Endura PRO Mixer', identifyTerm: 'Prestige Endura PRO Mixer Grinder' },
-        { name: 'Ultra Perfect+ Wet Grinder', identifyTerm: 'Ultra Perfect+ Wet Grinder' },
-        { name: 'Preethi Lavender Pro Wet Grinder', identifyTerm: 'Preethi Lavender Pro Wet Grinder' },
-        { name: 'Prestige Stainless Steel Cooker', identifyTerm: 'Prestige Stainless Steel Cooker' },
-        { name: 'Ganga Cooker', identifyTerm: 'Ganga Cooker' },
-        { name: 'Prestige 2-Burner Gas Stove', identifyTerm: 'Prestige 2-Burner Gas Stove' },
-        { name: 'Preethi Blue Flame Gas Stove', identifyTerm: 'Preethi Blue Flame' },
-        { name: 'Prestige PIC 20.0 Induction Cooktop', identifyTerm: 'Prestige PIC 20.0 Induction Cooktop' }
-    ];
+    // Link to our centralized products data
+    const defaultProductsList = (typeof PRODUCTS_DATA !== 'undefined') ?
+        PRODUCTS_DATA.map(p => ({ name: p.title, identifyTerm: p.title })) : [];
 
     function renderDefaultItemsToggleList(itemsArray, containerId, storageKey, type) {
         const container = document.getElementById(containerId);

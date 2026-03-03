@@ -4,10 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhagyalakshmi Home Needs | Premium Kitchenware</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="style.css?v=2.2">
+    <script src="products-data.js?v=2.2"></script>
 </head>
 
 <body id="top">
@@ -108,211 +106,14 @@
 
     <section id="shop" class="products-section">
         <h2 class="section-title">Our Premium Collection</h2>
-        <div class="product-grid">
-
-            <div class="product-card">
-                <img src="preethi_gas_stove.jpg" alt="Gas Stove">
-                <div class="product-info">
-                    <h3 class="product-title">3-Burner Gas Stove</h3>
-                    <p class="product-price">₹4,500</p>
-                    <p class="product-desc">Toughened glass top with high-efficiency brass burners.</p>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="grinder.png" alt="Wet Grinder">
-                <div class="product-info">
-                    <h3 class="product-title">Table Top Wet Grinder</h3>
-                    <p class="product-price">₹3,800</p>
-                    <p class="product-desc">2-Litre capacity with cylindrical stones for smooth grinding.</p>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="mixer.png" alt="Mixer Grinder">
-                <div class="product-info">
-                    <h3 class="product-title">Powerful Mixer Grinder</h3>
-                    <p class="product-price">₹3,200</p>
-                    <p class="product-desc">750W motor with 3 stainless steel jars for all kitchen needs.</p>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="cooker-5l.png" alt="Prestige Cooker" onerror="this.src='cooker.png'">
-                <div class="product-info">
-                    <h3 class="product-title">Prestige Cooker</h3>
-                    <p class="product-price">₹1,999</p>
-                    <p class="product-desc">Durable and safe pressure cooker for your daily fast cooking needs.</p>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="induction-cooktop.jpg" alt="Prestige Cooktop">
-                <div class="product-info">
-                    <h3 class="product-title">Prestige Cooktop</h3>
-                    <p class="product-price">₹2,450</p>
-                    <p class="product-desc">Digital display with multiple preset cooking menus and auto-off.</p>
-                </div>
-            </div>
-
+        <div id="premium-products-grid" class="product-grid">
+            <!-- Handled by script.js -->
         </div>
     </section>
 
-    <section id="all-products" class="products-section" style="background-color: #eef2f5;">
-        <h2 class="section-title">All Products</h2>
-
-        <div id="mixers-preethi"
-            style="max-width: 1200px; margin: 0 auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
-            <h3
-                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
-                Mixers > Preethi</h3>
-        </div>
-
-        <div class="product-grid">
-            <div class="product-card">
-                <img src="preethi.jpg" alt="Preethi Zodiac Mixer Grinder" onerror="this.src='mixer.png'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">Preethi Zodiac Mixer Grinder</h3>
-                    <p class="product-price">₹8,499</p>
-                    <p class="product-desc">Powerful 750W motor with 5 jars, including a Master Chef Plus jar for
-                        slicing, grating, and dough kneading.</p>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="preethi-x-pro-duo.png" alt="Preethi x pro duo" onerror="this.src='mixer.png'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">Preethi x pro duo</h3>
-                    <p class="product-price">
-                        <del style="color: #999; font-size: 0.85em; margin-right: 6px;">₹6,000</del>
-                        <span class="current-price">₹5,000</span>
-                    </p>
-                    <p class="product-desc">The Preethi Xpro Duo (MG-198) is a high-performance 1300-watt commercial
-                        mixer grinder designed for heavy-duty, continuous grinding with a 2-liter wet grinding jar and a
-                        0.75-liter chutney jar. It features a robust, shock-proof ABS body, stainless steel blades, and
-                        a tripod motor stand for stability and reduced vibration.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="mixers-prestige"
-            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
-            <h3
-                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
-                Mixers > Prestige</h3>
-        </div>
-
-        <div class="product-grid">
-            <div class="product-card">
-                <img src="prestige-mixer.webp" alt="Prestige Mixer Grinder" onerror="this.src='mixer.png'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">Prestige Endura PRO Mixer Grinder</h3>
-                    <p class="product-price">₹6,250</p>
-                    <p class="product-desc">1000W Heavy Duty Motor with 6 jars including a juicer extractor. Perfect for
-                        tough grinding tasks.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- GRINDERS SECTION -->
-        <div id="grinders-ultra"
-            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
-            <h3
-                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
-                Grinders > Ultra</h3>
-        </div>
-
-        <div class="product-grid">
-            <div class="product-card">
-                <img src="grinder.png" alt="Ultra Wet Grinder" onerror="this.src='grinder.png'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">Ultra Perfect+ Wet Grinder</h3>
-                    <p class="product-price">₹8,990</p>
-                    <p class="product-desc">2-Litre capacity with precise conical stones for soft idli batters and ABS
-                        body.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- COOKERS SECTION -->
-        <div id="cookers-prestige"
-            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
-            <h3
-                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
-                Cookers > Prestige</h3>
-        </div>
-
-        <div class="product-grid">
-            <div class="product-card">
-                <img src="cooker-5l.png" alt="Prestige Cooker" onerror="this.src='cooker.png'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">Prestige Stainless Steel Cooker</h3>
-                    <p class="product-price">
-                        <del style="color: #999; font-size: 0.85em; margin-right: 6px;">₹1,999</del>
-                        <span class="current-price">₹1,000</span>
-                    </p>
-                    <p class="product-desc">Durable and safe pressure cooker for your daily fast cooking needs. High
-                        quality stainless steel body.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="cookers-ganga"
-            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
-            <h3
-                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
-                Cookers > Ganga</h3>
-        </div>
-
-        <div class="product-grid">
-            <div class="product-card">
-                <img src="ganga_cooker.jpg" alt="Ganga Cooker" onerror="this.src='cooker.png'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">Ganga Cooker</h3>
-                    <p class="product-price">₹1,000</p>
-                    <p class="product-desc">Reliable and affordable Ganga pressure cooker for your everyday cooking
-                        needs.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- GAS STOVE SECTION -->
-        <div id="gas-stove-preethi"
-            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
-            <h3
-                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
-                Gas Stove > Preethi</h3>
-        </div>
-
-        <div class="product-grid">
-            <div class="product-card">
-                <img src="preethi_gas_stove.jpg" alt="Preethi Gas Stove" onerror="this.src='preethi_gas_stove.jpg'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">Preethi 3-Burner Glass Top Gas Stove</h3>
-                    <p class="product-price">₹4,500</p>
-                    <p class="product-desc">Toughened glass top with high-efficiency brass burners. Elegant black design
-                        for modern kitchens.</p>
-                </div>
-            </div>
-        </div>
-        <div id="gas-stove-prestige"
-            style="max-width: 1200px; margin: 40px auto 30px auto; text-align: left; padding-top: 40px; margin-top: -20px;">
-            <h3
-                style="font-size: 24px; color: var(--primary-color); border-bottom: 2px solid #ddd; padding-bottom: 10px;">
-                Gas Stove > Prestige</h3>
-        </div>
-
-        <div class="product-grid">
-            <div class="product-card">
-                <img src="prestige_gas_stove.jpg" alt="Prestige Gas Stove" onerror="this.src='gas stove.jpg'">
-                <div class="product-info" style="text-align: left;">
-                    <h3 class="product-title">Prestige 2-Burner Gas Stove</h3>
-                    <p class="product-price">₹2,000</p>
-                    <p class="product-desc">Sleek and compact Prestige gas stove perfect for smart modular kitchens.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div id="all-products-dynamic-container">
+        <!-- Categories and All Products injected by script.js -->
+    </div>
 
     <section id="contact" class="contact-section">
         <h2 class="section-title">Visit Us</h2>
