@@ -211,132 +211,120 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Live Search Dropdown Functionality
     let globalNavProductCards = [];
-    window.filterProducts = async function () {
-        const searchInput = document.getElementById('navSearchInput');
-        const dropdown = document.getElementById('searchResultsDropdown');
-        if (!searchInput || !dropdown) return;
+    let searchDebounceTimer;
 
-        const searchTerm = searchInput.value.toLowerCase().trim();
+    window.filterProducts = function () {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(async () => {
+            const searchInput = document.getElementById('navSearchInput');
+            const dropdown = document.getElementById('searchResultsDropdown');
+            if (!searchInput || !dropdown) return;
 
-        // Clear previous results
-        dropdown.innerHTML = '';
-        if (searchTerm.length === 0) {
-            dropdown.classList.remove('active');
-            if (globalNavProductCards.length > 0) {
-                globalNavProductCards.forEach(card => card.style.display = 'block');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            // Clear previous results
+            dropdown.innerHTML = '';
+            if (searchTerm.length === 0) {
+                dropdown.classList.remove('active');
+                if (globalNavProductCards.length > 0) {
+                    globalNavProductCards.forEach(card => card.style.display = 'block');
+                }
+                return;
             }
-            return;
-        }
 
-        if (globalNavProductCards.length === 0) {
-            let cards = Array.from(document.querySelectorAll('.product-card'));
-            if (cards.length > 0) {
-                globalNavProductCards = cards;
-            } else {
-                try {
-                    const response = await fetch('all-products.html');
-                    const text = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(text, 'text/html');
-                    globalNavProductCards = Array.from(doc.querySelectorAll('.product-card'));
-                } catch (e) {
-                    globalNavProductCards = [];
+            if (globalNavProductCards.length === 0) {
+                let cards = Array.from(document.querySelectorAll('.product-card'));
+                if (cards.length > 0) {
+                    globalNavProductCards = cards;
+                } else {
+                    try {
+                        const response = await fetch('all-products.html');
+                        const text = await response.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(text, 'text/html');
+                        globalNavProductCards = Array.from(doc.querySelectorAll('.product-card'));
+                    } catch (e) {
+                        globalNavProductCards = [];
+                    }
                 }
             }
-        }
 
-        const productCards = globalNavProductCards;
+            const productCards = globalNavProductCards;
+            dropdown.innerHTML = '';
 
-        // Clear previous results
-        dropdown.innerHTML = '';
+            let hasResults = false;
+            const seenTitles = new Set();
 
-        if (searchTerm.length === 0) {
-            dropdown.classList.remove('active');
+            productCards.forEach((card, index) => {
+                const titleEl = card.querySelector('.product-title');
+                const priceEl = card.querySelector('.product-price');
+                const imgEl = card.querySelector('img');
 
-            // Re-show all product cards if they were previously hidden
-            productCards.forEach(card => card.style.display = 'block');
-            return;
-        }
+                const title = titleEl ? titleEl.textContent : '';
+                const price = priceEl ? priceEl.textContent : '';
+                const imgSrc = imgEl ? imgEl.src : '';
 
-        let hasResults = false;
+                if (!card.id) {
+                    card.id = 'product-' + index + '-' + title.replace(/\s+/g, '-').toLowerCase();
+                }
 
-        // Use a Set to track unique product titles (to avoid duplicates from sections)
-        const seenTitles = new Set();
+                if (!seenTitles.has(title) && title.toLowerCase().includes(searchTerm)) {
+                    hasResults = true;
+                    seenTitles.add(title);
 
-        productCards.forEach((card, index) => {
-            const titleEl = card.querySelector('.product-title');
-            const descEl = card.querySelector('.product-desc');
-            const priceEl = card.querySelector('.product-price');
-            const imgEl = card.querySelector('img');
-
-            const title = titleEl ? titleEl.textContent : '';
-            const desc = descEl ? descEl.textContent.toLowerCase() : '';
-            const price = priceEl ? priceEl.textContent : '';
-            const imgSrc = imgEl ? imgEl.src : '';
-
-            // Give the card an ID if it doesn't have one so we can scroll to it
-            if (!card.id) {
-                card.id = 'product-' + index + '-' + title.replace(/\s+/g, '-').toLowerCase();
-            }
-
-            // Restore visibility in the main page (optional: you could keep them filtered or leave them alone)
-            card.style.display = 'block';
-
-            if (!seenTitles.has(title) && title.toLowerCase().includes(searchTerm)) {
-                hasResults = true;
-                seenTitles.add(title);
-
-                const itemDiv = document.createElement('a');
-                const isAllProd = window.location.pathname.includes('all-products.html');
-                itemDiv.href = (isAllProd ? '' : 'all-products.html') + '#' + card.id; // Link to specific product ID
-                itemDiv.className = 'search-result-item';
-
-                // Add click listener to scroll to products and close dropdown
-                itemDiv.addEventListener('click', (e) => {
+                    const itemDiv = document.createElement('a');
                     const isAllProd = window.location.pathname.includes('all-products.html');
-                    if (!isAllProd) {
-                        return; // Let the default anchor click nav us to the page
-                    }
-                    e.preventDefault();
-                    dropdown.classList.remove('active');
-                    searchInput.value = '';
+                    itemDiv.href = (isAllProd ? '' : 'all-products.html') + '#' + card.id;
+                    itemDiv.className = 'search-result-item';
 
-                    const headerOffset = 80;
-                    const elementPosition = card.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    itemDiv.addEventListener('click', (e) => {
+                        const isAllProd = window.location.pathname.includes('all-products.html');
+                        if (!isAllProd) return;
 
-                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        e.preventDefault();
+                        dropdown.classList.remove('active');
+                        searchInput.value = '';
 
-                    const originalBg = card.style.backgroundColor;
-                    const originalTransition = card.style.transition;
-                    card.style.transition = 'background-color 0.5s ease';
-                    card.style.backgroundColor = '#fff3e0';
+                        const headerOffset = 80;
+                        const elementPosition = card.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-                    setTimeout(() => {
-                        card.style.backgroundColor = originalBg;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+
+                        const originalBg = card.style.backgroundColor;
+                        card.style.transition = 'background-color 0.5s ease';
+                        card.style.backgroundColor = '#fff3e0';
+
                         setTimeout(() => {
-                            card.style.transition = originalTransition;
-                        }, 500);
-                    }, 1500);
-                });
+                            card.style.backgroundColor = originalBg;
+                        }, 1500);
+                    });
 
-                itemDiv.innerHTML = `
-                    <img src="${imgSrc}" class="search-result-img" alt="${title}">
-                    <div class="search-result-info">
-                        <span class="search-result-title">${title}</span>
-                        <span class="search-result-price">${price}</span>
-                    </div>
-                `;
+                    itemDiv.innerHTML = `
+                        <img src="${imgSrc}" class="search-result-img" alt="${title}">
+                        <div class="search-result-info">
+                            <span class="search-result-title">${title}</span>
+                            <span class="search-result-price">${price}</span>
+                        </div>
+                    `;
+                    dropdown.appendChild(itemDiv);
+                }
+            });
 
-                dropdown.appendChild(itemDiv);
+            if (!hasResults) {
+                dropdown.innerHTML = '<div class="search-no-results">No products found for "' + searchTerm + '"</div>';
             }
-        });
 
-        if (!hasResults) {
-            dropdown.innerHTML = '<div class="search-no-results">No products found for "' + searchTerm + '"</div>';
-        }
+            dropdown.classList.add('active');
 
-        dropdown.classList.add('active');
+            // Mobile Fix: Scroll the navigation menu to top so results are visible
+            if (window.innerWidth <= 768) {
+                const navLinks = document.querySelector('.nav-links');
+                if (navLinks) {
+                    navLinks.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+        }, 300); // 300ms debounce
     };
 
     // Close dropdown when clicking outside
