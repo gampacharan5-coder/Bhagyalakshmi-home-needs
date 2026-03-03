@@ -350,25 +350,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- Mobile Menu Accordion Handlers ---
-    // Prevent default anchor jumping for # links, and handle mobile toggles safely for iOS.
 
     // 1. Toggle Our Products
     const productsToggle = document.getElementById('mobile-products-toggle');
     if (productsToggle) {
         productsToggle.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation(); // Prevent bubbling to document
             const content = document.getElementById('main-dropdown-content');
-            if (content) content.classList.toggle('mobile-open');
+            if (content) {
+                const isOpen = content.classList.contains('mobile-open');
+                // Close all other submenus first for a clean accordion effect
+                document.querySelectorAll('.dropdown-submenu-content.mobile-open').forEach(sub => {
+                    sub.classList.remove('mobile-open');
+                });
+                content.classList.toggle('mobile-open');
+            }
         });
     }
 
-    // 2. Toggle Submenus
+    // 2. Toggle Submenus (Mixer, Grinder, etc.)
     const subMenuTitles = document.querySelectorAll('.dropdown-submenu-title');
     subMenuTitles.forEach(title => {
         title.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const submenuContent = title.nextElementSibling;
-            if (submenuContent) submenuContent.classList.toggle('mobile-open');
+            if (submenuContent) {
+                // Optional: close other submenus in the same group
+                const parent = title.closest('.dropdown-content');
+                if (parent) {
+                    parent.querySelectorAll('.dropdown-submenu-content.mobile-open').forEach(sub => {
+                        if (sub !== submenuContent) sub.classList.remove('mobile-open');
+                    });
+                }
+                submenuContent.classList.toggle('mobile-open');
+            }
         });
     });
 
@@ -379,6 +396,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (navLinks && navLinks.classList.contains('active')) {
                 navLinks.classList.remove('active');
             }
+            // Also reset accordions for next open
+            document.querySelectorAll('.dropdown-content.mobile-open, .dropdown-submenu-content.mobile-open').forEach(el => {
+                el.classList.remove('mobile-open');
+            });
         });
     });
 
