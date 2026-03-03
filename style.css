@@ -222,10 +222,12 @@ header {
     /* Slight indent animation on hover */
 }
 
-.dropdown:hover>.dropdown-content {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
+@media (min-width: 769px) {
+    .dropdown:hover>.dropdown-content {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Nested Submenu */
@@ -254,10 +256,12 @@ header {
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.dropdown-submenu:hover>.dropdown-submenu-content {
-    visibility: visible;
-    opacity: 1;
-    transform: translateX(0);
+@media (min-width: 769px) {
+    .dropdown-submenu:hover>.dropdown-submenu-content {
+        visibility: visible;
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .dropdown-submenu-title {

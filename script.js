@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             gridToAppend = document.createElement('div');
             gridToAppend.className = 'product-grid';
-            
+
 
             // Append it to the main 'All Products' bucket
             const allProductsContainer = document.getElementById('all-products') || document.querySelector('.products-section');
@@ -186,9 +186,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     scrollLinks.forEach(anchor => {
         anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+
+            // Skip generic hash links used for accordion toggles
+            if (targetId === '#') return;
+
             e.preventDefault();
 
-            const targetId = this.getAttribute('href');
             const targetSection = document.querySelector(targetId);
 
             if (targetSection) {
