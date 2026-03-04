@@ -108,8 +108,66 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function renderNavigationMenu() {
+        const menuContainer = document.getElementById('main-dropdown-content');
+        if (!menuContainer) return;
+
+        menuContainer.innerHTML = '';
+
+        if (!customCategoriesData || customCategoriesData.length === 0) {
+            menuContainer.innerHTML = '<a href="#" style="padding: 10px 20px; color: #888; font-style: italic;">No categories added</a>';
+            return;
+        }
+
+        // Group categories by menuName
+        const grouped = {};
+        customCategoriesData.forEach(cat => {
+            if (!grouped[cat.menuName]) grouped[cat.menuName] = [];
+            grouped[cat.menuName].push(cat);
+        });
+
+        // Create submenus
+        for (const [menuName, categories] of Object.entries(grouped)) {
+            const submenu = document.createElement('div');
+            submenu.className = 'dropdown-submenu';
+
+            let submenuHtml = `<a href="#" class="dropdown-submenu-title">${menuName}</a>`;
+            submenuHtml += `<div class="dropdown-submenu-content">`;
+
+            categories.forEach(cat => {
+                submenuHtml += `<a href="all-products.html#${cat.id}" class="nav-close-trigger">${cat.brandName}</a>`;
+            });
+
+            submenuHtml += `</div>`;
+            submenu.innerHTML = submenuHtml;
+            menuContainer.appendChild(submenu);
+        }
+
+        // Re-attach event listeners for the newly created submenus (for mobile)
+        const subMenuTitles = menuContainer.querySelectorAll('.dropdown-submenu-title');
+        subMenuTitles.forEach(title => {
+            title.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const submenuContent = title.nextElementSibling;
+                    if (submenuContent) {
+                        const parent = title.closest('.dropdown-content');
+                        if (parent) {
+                            parent.querySelectorAll('.dropdown-submenu-content.mobile-open').forEach(sub => {
+                                if (sub !== submenuContent) sub.classList.remove('mobile-open');
+                            });
+                        }
+                        submenuContent.classList.toggle('mobile-open');
+                    }
+                }
+            });
+        });
+    }
+
     if (typeof PRODUCTS_DATA !== 'undefined') {
         renderProducts();
+        renderNavigationMenu();
     }
 
     // --- Dynamic Hero Slider ---
