@@ -93,7 +93,12 @@ const Database = {
             }
         }
         const products = await this.getCustomProducts();
-        products.push(product);
+        const existingIdx = products.findIndex(p => p.id === product.id);
+        if (existingIdx !== -1) {
+            products[existingIdx] = product;
+        } else {
+            products.push(product);
+        }
         localStorage.setItem('customStoreProducts', JSON.stringify(products));
     },
     async deleteCustomProduct(id) {

@@ -244,6 +244,20 @@ body {
     background-color: #d32f2f;
 }
 
+.edit-btn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.edit-btn:hover {
+    background-color: #1976D2;
+}
+
 .toggle-visibility-btn {
     background-color: #ff9800;
     color: white;
@@ -379,4 +393,38 @@ body {
         /* Enlarge tap targets */
         font-size: 16px;
     }
+
+    .edit-btn {
+        margin-right: 0;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}
+
+/* Edit Modal Specifics */
+#edit-modal .modal-content {
+    max-width: 600px;
+    text-align: left;
+}
+
+#edit-modal h2 {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-btn {
+    padding: 12px 25px;
+    background: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
 }

@@ -113,11 +113,90 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <p>Category: <strong>${p.category}</strong></p>
                     <p>Price: ${priceHtml}</p>
                 </div>
-                <button class="delete-btn" onclick="deleteProduct('${p.id}')">Delete</button>
+                <div class="item-actions">
+                    <button class="edit-btn" onclick="editProduct('${p.id}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteProduct('${p.id}')">Delete</button>
+                </div>
             `;
             list.appendChild(item);
         });
     }
+
+    // --- Product Edit Logic ---
+    window.editProduct = async function (id) {
+        const products = await Database.getCustomProducts();
+        const product = products.find(p => p.id === id);
+        if (!product) return;
+
+        // Sync category dropdown from main form to edit modal first
+        const mainCatSelect = document.getElementById('prod-category');
+        const editCatSelect = document.getElementById('edit-prod-category');
+        editCatSelect.innerHTML = mainCatSelect.innerHTML;
+
+        // Populate fields
+        document.getElementById('edit-prod-id').value = product.id;
+        document.getElementById('edit-prod-name').value = product.title;
+        document.getElementById('edit-prod-category').value = product.category;
+        document.getElementById('edit-prod-orig-price').value = product.origPrice;
+        document.getElementById('edit-prod-offer-price').value = product.offerPrice || '';
+        document.getElementById('edit-prod-desc').value = product.desc || '';
+        document.getElementById('edit-prod-featured').checked = product.featured || false;
+
+        document.getElementById('edit-modal').style.display = 'flex';
+    };
+
+    window.closeEditModal = function () {
+        document.getElementById('edit-modal').style.display = 'none';
+        document.getElementById('edit-product-form').reset();
+    };
+
+    const editForm = document.getElementById('edit-product-form');
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('edit-prod-id').value;
+        const products = await Database.getCustomProducts();
+        const originalProduct = products.find(p => p.id === id);
+
+        const newImageFile = document.getElementById('edit-prod-image').files[0];
+
+        const executeUpdate = async (imageData) => {
+            const catSelect = document.getElementById('edit-prod-category');
+            const selectedOpt = catSelect.options[catSelect.selectedIndex];
+
+            let displayName = selectedOpt.text;
+            if (selectedOpt.parentElement && selectedOpt.parentElement.tagName === 'OPTGROUP') {
+                displayName = `${selectedOpt.parentElement.label.replace(' (Custom)', '')} > ${selectedOpt.text}`;
+            }
+
+            const updatedProduct = {
+                ...originalProduct,
+                title: document.getElementById('edit-prod-name').value,
+                category: catSelect.value,
+                categoryDisplayName: selectedOpt.dataset.displayName || displayName,
+                image: imageData || originalProduct.image,
+                origPrice: document.getElementById('edit-prod-orig-price').value,
+                offerPrice: document.getElementById('edit-prod-offer-price').value,
+                desc: document.getElementById('edit-prod-desc').value,
+                featured: document.getElementById('edit-prod-featured').checked,
+                lastUpdated: new Date().toISOString()
+            };
+
+            await Database.saveCustomProduct(updatedProduct);
+            closeEditModal();
+            loadCustomProducts();
+
+            alert("Product updated successfully!");
+        };
+
+        if (newImageFile) {
+            const reader = new FileReader();
+            reader.onload = (event) => executeUpdate(event.target.result);
+            reader.readAsDataURL(newImageFile);
+        } else {
+            await executeUpdate(null);
+        }
+    });
 
     // Attach to window so inline onclick can use it
     window.deleteProduct = async function (id) {
