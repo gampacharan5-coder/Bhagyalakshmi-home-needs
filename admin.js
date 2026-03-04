@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // Close modal when clicking outside content
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.style.display = 'none';
+        }
+    });
+
     // Form submission
     const form = document.getElementById('product-form');
     const imageInput = document.getElementById('prod-image');

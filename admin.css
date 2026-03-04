@@ -22,8 +22,12 @@ body {
     background: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    /* Changed from center to allow scrolling from top */
+    padding: 20px;
     z-index: 1000;
+    overflow-y: auto;
+    /* Enable scrolling */
 }
 
 .modal-content {
@@ -405,6 +409,9 @@ body {
 #edit-modal .modal-content {
     max-width: 600px;
     text-align: left;
+    margin-top: 40px;
+    /* Space from top when scrolling */
+    margin-bottom: 40px;
 }
 
 #edit-modal h2 {
