@@ -415,7 +415,16 @@ body {
     max-width: 650px;
     text-align: left;
     margin: 40px auto;
-    /* Standard vertical spacing for long forms */
+    min-height: 400px;
+    /* Ensure it's substantial */
+}
+
+/* Force specific overlay behavior for v2 */
+.modal-v2.modal-overlay {
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+    padding-bottom: 80px;
+    /* Extra space at bottom to ensure buttons are reachable */
 }
 
 .close-modal {
