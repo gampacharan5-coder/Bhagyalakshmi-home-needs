@@ -22,10 +22,12 @@ body {
     background: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
-    align-items: center;
-    /* Back to center for standard view */
+    align-items: flex-start;
+    /* CRITICAL: prevents clipping at top/bottom */
     padding: 20px;
     z-index: 1000;
+    overflow-y: auto;
+    /* Enable scrolling on the backdrop */
 }
 
 .modal-content {
@@ -36,10 +38,8 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     width: 100%;
     max-width: 450px;
-    max-height: 90vh;
-    /* Don't exceed viewport */
-    overflow-y: auto;
-    /* Internal scroll is more reliable */
+    margin: 40px auto;
+    /* Centered with vertical space */
     position: relative;
     /* For X button */
     text-align: center;
@@ -414,8 +414,8 @@ body {
 #edit-modal .modal-content {
     max-width: 650px;
     text-align: left;
-    margin: 0;
-    /* Centered by flex parent */
+    margin: 40px auto;
+    /* Standard vertical spacing for long forms */
 }
 
 .close-modal {
