@@ -140,7 +140,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             submenuHtml += `<div class="dropdown-submenu-content">`;
 
             categories.forEach(cat => {
-                submenuHtml += `<a href="all-products.html#${cat.id}" class="nav-close-trigger">${cat.brandName}</a>`;
+                const isAllProd = window.location.pathname.includes('all-products.html');
+                const linkHref = (isAllProd ? '' : 'all-products.html') + '#' + cat.id;
+                submenuHtml += `<a href="${linkHref}" class="nav-close-trigger">${cat.brandName}</a>`;
             });
 
             submenuHtml += `</div>`;
@@ -149,10 +151,34 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function handleHashScroll() {
+        const hash = window.location.hash;
+        if (hash && hash !== '#') {
+            const target = document.querySelector(hash);
+            if (target) {
+                setTimeout(() => {
+                    const headerOffset = 85;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }, 100);
+            }
+        }
+    }
+
     if (typeof PRODUCTS_DATA !== 'undefined') {
         renderProducts();
         renderNavigationMenu();
+
+        // Handle initial hash in URL
+        setTimeout(handleHashScroll, 500);
     }
+
+    // Listen for hash changes (for menu clicks on the same page)
+    window.addEventListener('hashchange', handleHashScroll);
 
     // --- Dynamic Hero Slider ---
     if (customSlides.length > 0) {
