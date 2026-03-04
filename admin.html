@@ -16,6 +16,8 @@
     <!-- Simple Login Modal -->
     <div id="login-modal" class="modal-overlay">
         <div class="modal-content">
+            <span class="close-modal"
+                onclick="document.getElementById('login-modal').style.display='none'">&times;</span>
             <h2>Admin Login</h2>
             <p>Please enter the admin passcode to access this panel.</p>
             <input type="password" id="admin-password" placeholder="Passcode (hint: admin123)">
@@ -216,6 +218,7 @@
     <!-- Edit Product Modal -->
     <div id="edit-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
             <h2>Edit Product</h2>
             <form id="edit-product-form" class="product-form">
                 <input type="hidden" id="edit-prod-id">
