@@ -26,38 +26,41 @@ if (firebaseConfig.apiKey) {
         setTimeout(async () => {
             if (localStorage.getItem("migratedToFirebase") !== "true") {
                 console.log("Running one-time data migration from Local Storage to Firebase...");
+                try {
+                    // Migrate Products
+                    const localProducts = JSON.parse(localStorage.getItem('customStoreProducts') || '[]');
+                    for (let p of localProducts) {
+                        await db.collection("customStoreProducts").doc(p.id).set(p);
+                    }
 
-                // Migrate Products
-                const localProducts = JSON.parse(localStorage.getItem('customStoreProducts') || '[]');
-                for (let p of localProducts) {
-                    await db.collection("customStoreProducts").doc(p.id).set(p);
+                    // Migrate Categories
+                    const localCats = JSON.parse(localStorage.getItem('customStoreCategories') || '[]');
+                    for (let c of localCats) {
+                        await db.collection("customStoreCategories").doc(c.id).set(c);
+                    }
+
+                    // Migrate Slides
+                    const localSlides = JSON.parse(localStorage.getItem('customStoreSlides') || '[]');
+                    for (let s of localSlides) {
+                        await db.collection("customStoreSlides").doc(s.id).set(s);
+                    }
+
+                    // Migrate Settings
+                    const hiddenProds = JSON.parse(localStorage.getItem('hiddenStoreProducts') || '[]');
+                    const hiddenCats = JSON.parse(localStorage.getItem('hiddenStoreCategories') || '[]');
+                    const offerText = localStorage.getItem('storeOfferBannerText') || "";
+
+                    await db.collection("settings").doc("global").set({
+                        hiddenStoreProducts: hiddenProds,
+                        hiddenStoreCategories: hiddenCats,
+                        storeOfferBannerText: offerText
+                    }, { merge: true });
+
+                    localStorage.setItem("migratedToFirebase", "true");
+                    console.log("Migration Complete! Please refresh the page.");
+                } catch (migrationError) {
+                    console.error("Migration failed. Please ensure Firestore is created and rules allow writing.", migrationError);
                 }
-
-                // Migrate Categories
-                const localCats = JSON.parse(localStorage.getItem('customStoreCategories') || '[]');
-                for (let c of localCats) {
-                    await db.collection("customStoreCategories").doc(c.id).set(c);
-                }
-
-                // Migrate Slides
-                const localSlides = JSON.parse(localStorage.getItem('customStoreSlides') || '[]');
-                for (let s of localSlides) {
-                    await db.collection("customStoreSlides").doc(s.id).set(s);
-                }
-
-                // Migrate Settings
-                const hiddenProds = JSON.parse(localStorage.getItem('hiddenStoreProducts') || '[]');
-                const hiddenCats = JSON.parse(localStorage.getItem('hiddenStoreCategories') || '[]');
-                const offerText = localStorage.getItem('storeOfferBannerText') || "";
-
-                await db.collection("settings").doc("global").set({
-                    hiddenStoreProducts: hiddenProds,
-                    hiddenStoreCategories: hiddenCats,
-                    storeOfferBannerText: offerText
-                }, { merge: true });
-
-                localStorage.setItem("migratedToFirebase", "true");
-                console.log("Migration Complete! Please refresh the page.");
             }
         }, 1500);
 
@@ -71,82 +74,118 @@ if (firebaseConfig.apiKey) {
 const Database = {
     async getCustomProducts() {
         if (useFirebase) {
-            const snap = await db.collection("customStoreProducts").get();
-            return snap.docs.map(doc => doc.data());
+            try {
+                const snap = await db.collection("customStoreProducts").get();
+                return snap.docs.map(doc => doc.data());
+            } catch (e) {
+                console.error("Firebase Error (getCustomProducts):", e);
+            }
         }
         return JSON.parse(localStorage.getItem('customStoreProducts') || '[]');
     },
     async saveCustomProduct(product) {
         if (useFirebase) {
-            await db.collection("customStoreProducts").doc(product.id).set(product);
-        } else {
-            const products = await this.getCustomProducts();
-            products.push(product);
-            localStorage.setItem('customStoreProducts', JSON.stringify(products));
+            try {
+                await db.collection("customStoreProducts").doc(product.id).set(product);
+                return;
+            } catch (e) {
+                console.error("Firebase Error (saveCustomProduct):", e);
+            }
         }
+        const products = await this.getCustomProducts();
+        products.push(product);
+        localStorage.setItem('customStoreProducts', JSON.stringify(products));
     },
     async deleteCustomProduct(id) {
         if (useFirebase) {
-            await db.collection("customStoreProducts").doc(id).delete();
-        } else {
-            let products = await this.getCustomProducts();
-            products = products.filter(p => p.id !== id);
-            localStorage.setItem('customStoreProducts', JSON.stringify(products));
+            try {
+                await db.collection("customStoreProducts").doc(id).delete();
+                return;
+            } catch (e) {
+                console.error("Firebase Error (deleteCustomProduct):", e);
+            }
         }
+        let products = await this.getCustomProducts();
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('customStoreProducts', JSON.stringify(products));
     },
 
     // Categories
     async getCustomCategories() {
         if (useFirebase) {
-            const snap = await db.collection("customStoreCategories").get();
-            return snap.docs.map(doc => doc.data());
+            try {
+                const snap = await db.collection("customStoreCategories").get();
+                return snap.docs.map(doc => doc.data());
+            } catch (e) {
+                console.error("Firebase Error (getCustomCategories):", e);
+            }
         }
         return JSON.parse(localStorage.getItem('customStoreCategories') || '[]');
     },
     async saveCustomCategory(cat) {
         if (useFirebase) {
-            await db.collection("customStoreCategories").doc(cat.id).set(cat);
-        } else {
-            const cats = await this.getCustomCategories();
-            if (!cats.find(c => c.id === cat.id)) cats.push(cat);
-            localStorage.setItem('customStoreCategories', JSON.stringify(cats));
+            try {
+                await db.collection("customStoreCategories").doc(cat.id).set(cat);
+                return;
+            } catch (e) {
+                console.error("Firebase Error (saveCustomCategory):", e);
+            }
         }
+        const cats = await this.getCustomCategories();
+        if (!cats.find(c => c.id === cat.id)) cats.push(cat);
+        localStorage.setItem('customStoreCategories', JSON.stringify(cats));
     },
     async deleteCustomCategory(id) {
         if (useFirebase) {
-            await db.collection("customStoreCategories").doc(id).delete();
-        } else {
-            let cats = await this.getCustomCategories();
-            cats = cats.filter(c => c.id !== id);
-            localStorage.setItem('customStoreCategories', JSON.stringify(cats));
+            try {
+                await db.collection("customStoreCategories").doc(id).delete();
+                return;
+            } catch (e) {
+                console.error("Firebase Error (deleteCustomCategory):", e);
+            }
         }
+        let cats = await this.getCustomCategories();
+        cats = cats.filter(c => c.id !== id);
+        localStorage.setItem('customStoreCategories', JSON.stringify(cats));
     },
 
     // Slides
     async getCustomSlides() {
         if (useFirebase) {
-            const snap = await db.collection("customStoreSlides").get();
-            return snap.docs.map(doc => doc.data());
+            try {
+                const snap = await db.collection("customStoreSlides").get();
+                return snap.docs.map(doc => doc.data());
+            } catch (e) {
+                console.error("Firebase Error (getCustomSlides):", e);
+            }
         }
         return JSON.parse(localStorage.getItem('customStoreSlides') || '[]');
     },
     async saveCustomSlide(slide) {
         if (useFirebase) {
-            await db.collection("customStoreSlides").doc(slide.id).set(slide);
-        } else {
-            const slides = await this.getCustomSlides();
-            slides.push(slide);
-            localStorage.setItem('customStoreSlides', JSON.stringify(slides));
+            try {
+                await db.collection("customStoreSlides").doc(slide.id).set(slide);
+                return;
+            } catch (e) {
+                console.error("Firebase Error (saveCustomSlide):", e);
+            }
         }
+        const slides = await this.getCustomSlides();
+        slides.push(slide);
+        localStorage.setItem('customStoreSlides', JSON.stringify(slides));
     },
     async deleteCustomSlide(id) {
         if (useFirebase) {
-            await db.collection("customStoreSlides").doc(id).delete();
-        } else {
-            let slides = await this.getCustomSlides();
-            slides = slides.filter(s => s.id !== id);
-            localStorage.setItem('customStoreSlides', JSON.stringify(slides));
+            try {
+                await db.collection("customStoreSlides").doc(id).delete();
+                return;
+            } catch (e) {
+                console.error("Firebase Error (deleteCustomSlide):", e);
+            }
         }
+        let slides = await this.getCustomSlides();
+        slides = slides.filter(s => s.id !== id);
+        localStorage.setItem('customStoreSlides', JSON.stringify(slides));
     },
 
     // Settings (Hidden Items & Offer Banner)
@@ -157,11 +196,15 @@ const Database = {
             storeOfferBannerText: ""
         };
         if (useFirebase) {
-            const doc = await db.collection("settings").doc("global").get();
-            if (doc.exists) {
-                return { ...defaultSettings, ...doc.data() };
+            try {
+                const doc = await db.collection("settings").doc("global").get();
+                if (doc.exists) {
+                    return { ...defaultSettings, ...doc.data() };
+                }
+                return defaultSettings;
+            } catch (e) {
+                console.error("Firebase Error (getSettings):", e);
             }
-            return defaultSettings;
         }
         return {
             hiddenStoreProducts: JSON.parse(localStorage.getItem('hiddenStoreProducts') || '[]'),
@@ -171,11 +214,15 @@ const Database = {
     },
     async saveSetting(key, value) {
         if (useFirebase) {
-            await db.collection("settings").doc("global").set({ [key]: value }, { merge: true });
-        } else {
-            if (typeof value === 'string') localStorage.setItem(key, value);
-            else localStorage.setItem(key, JSON.stringify(value));
+            try {
+                await db.collection("settings").doc("global").set({ [key]: value }, { merge: true });
+                return;
+            } catch (e) {
+                console.error("Firebase Error (saveSetting):", e);
+            }
         }
+        if (typeof value === 'string') localStorage.setItem(key, value);
+        else localStorage.setItem(key, JSON.stringify(value));
     }
 };
 
