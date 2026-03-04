@@ -93,26 +93,43 @@
                     <!-- Javascript will load custom products here to easily delete them -->
                 </div>
             </section>
-            <section class="add-category-section custom-admin-card">
-                <h2 class="admin-card-header">Add Custom Menu / Company</h2>
-                <form id="category-form" class="product-form">
-                    <div class="form-row">
-                        <div class="form-group half">
-                            <label for="new-menu-name">Main Menu (e.g. Heaters, Fans)</label>
-                            <input type="text" id="new-menu-name" required placeholder="Main Menu Name">
-                        </div>
-                        <div class="form-group half">
-                            <label for="new-brand-name">Company / Brand (e.g. Bajaj)</label>
-                            <input type="text" id="new-brand-name" required placeholder="Company Name">
+            <section class="add-category-section custom-admin-card full-width-card">
+                <h2 style="margin-bottom: 25px; padding-bottom: 10px; border-bottom: 2px solid #eee; color: #444;">
+                    Add Custom Menu / Company</h2>
+
+                <div class="split-columns">
+                    <!-- Current Menus List -->
+                    <div style="flex: 1; display: flex; flex-direction: column;">
+                        <h3 style="margin-bottom: 15px; color: #2196F3;">Current Custom Menus</h3>
+                        <div id="custom-categories-list" class="custom-products-grid"
+                            style="flex: 1; min-height: 200px; margin-top: 0;">
+                            <!-- Javascript will load custom categories here to easily delete them -->
                         </div>
                     </div>
-                    <button type="submit" class="submit-btn add-menu-btn">Add to Navigation Menu</button>
-                    <p id="cat-success-msg" style="color: green; display: none; margin-top: 10px; font-weight: bold;">
-                        Menu added successfully! It is now available in the dropdown.</p>
-                </form>
 
-                <div id="custom-categories-list" class="custom-products-grid" style="margin-top: 20px;">
-                    <!-- Javascript will load custom categories here to easily delete them -->
+                    <!-- Add New Menu Form -->
+                    <div style="flex: 1;">
+                        <div class="custom-admin-card" style="margin-top: 0;">
+                            <h3 style="margin-bottom: 15px; color: #2196F3;">Create New Menu</h3>
+                            <form id="category-form" class="product-form">
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="new-menu-name">Main Menu (e.g. Heaters)</label>
+                                        <input type="text" id="new-menu-name" required placeholder="Main Menu Name">
+                                    </div>
+                                    <div class="form-group half">
+                                        <label for="new-brand-name">Company (e.g. Bajaj)</label>
+                                        <input type="text" id="new-brand-name" required placeholder="Company Name">
+                                    </div>
+                                </div>
+                                <button type="submit" class="submit-btn add-menu-btn" style="margin-top: 10px;">Add to
+                                    Navigation Menu</button>
+                                <p id="cat-success-msg"
+                                    style="color: green; display: none; margin-top: 10px; font-weight: bold;">
+                                    Menu added successfully!</p>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </section>
 

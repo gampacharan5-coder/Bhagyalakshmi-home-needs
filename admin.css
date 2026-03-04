@@ -143,6 +143,11 @@ body {
     color: #444;
 }
 
+.manage-inventory-section {
+    display: flex;
+    flex-direction: column;
+}
+
 .form-group {
     margin-bottom: 20px;
 }
@@ -210,8 +215,8 @@ body {
 
 /* Custom Products List */
 .custom-products-grid {
-    max-height: 300px;
-    min-height: 100px;
+    flex-grow: 1;
+    min-height: 200px;
     overflow-y: auto;
     padding: 10px;
     background: #fdfdfd;
