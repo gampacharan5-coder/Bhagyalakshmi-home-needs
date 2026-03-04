@@ -319,3 +319,6 @@ if (document.readyState === 'loading') {
     startChatbot();
 }
 
+// Expose globally so admin panel can restart it dynamically
+window.startChatbot = startChatbot;
+

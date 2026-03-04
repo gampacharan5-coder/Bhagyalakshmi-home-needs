@@ -237,7 +237,8 @@ const Database = {
         const defaultSettings = {
             hiddenStoreProducts: [],
             hiddenStoreCategories: [],
-            storeOfferBannerText: ""
+            storeOfferBannerText: "",
+            chatbotEnabled: true
         };
         if (useFirebase) {
             try {
@@ -250,10 +251,17 @@ const Database = {
                 console.error("Firebase Error (getSettings):", e);
             }
         }
+
+        let localChatbotEnabled = true;
+        if (localStorage.getItem('chatbotEnabled') !== null) {
+            localChatbotEnabled = JSON.parse(localStorage.getItem('chatbotEnabled'));
+        }
+
         return {
             hiddenStoreProducts: JSON.parse(localStorage.getItem('hiddenStoreProducts') || '[]'),
             hiddenStoreCategories: JSON.parse(localStorage.getItem('hiddenStoreCategories') || '[]'),
-            storeOfferBannerText: localStorage.getItem('storeOfferBannerText') || ""
+            storeOfferBannerText: localStorage.getItem('storeOfferBannerText') || "",
+            chatbotEnabled: localChatbotEnabled
         };
     },
     async saveSetting(key, value) {

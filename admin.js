@@ -526,6 +526,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             await Database.saveSetting('chatbotEnabled', isNowEnabled);
 
+            // Dynamically apply visual change instantly
+            const chatBtn = document.getElementById('chatbot-button');
+            const chatContainer = document.getElementById('chatbot-container');
+
+            if (isNowEnabled) {
+                if (!chatBtn && typeof window.startChatbot === 'function') {
+                    window.startChatbot();
+                }
+            } else {
+                if (chatBtn) chatBtn.style.display = 'none';
+                if (chatContainer) chatContainer.style.display = 'none';
+            }
+
             const msg = document.getElementById('chatbot-toggle-msg');
             msg.textContent = 'Chatbot ' + (isNowEnabled ? 'ENABLED' : 'DISABLED') + ' globally!';
             msg.style.display = 'block';
