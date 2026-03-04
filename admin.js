@@ -457,4 +457,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     await loadCustomMarquees();
+
+    // --- PDF Migration Tool ---
+    async function migratePDFData() {
+        console.log("PDF Migration Tool Started...");
+        const placeholders = {
+            cooker: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAAAXNSR0IArs4c6QAA... (PASTE REAL COOKER DATA HERE - I WILL USE THE ONE FROM STEP 1011)",
+            mixer: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAAAXNSR0IArs4c6QAA... (PASTE REAL MIXER DATA HERE)",
+            induction: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ... (PASTE REAL INDUCTION DATA HERE)",
+            pan: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAAAXNSR0IArs4c6QAA... (PASTE REAL PAN DATA HERE)"
+
+        };
+
+        const categories = [
+            { id: "cookers-pigeon", menuName: "Cookers", brandName: "Pigeon", displayName: "Cookers > Pigeon" },
+            { id: "cookware-pigeon", menuName: "Cookware", brandName: "Pigeon", displayName: "Cookware > Pigeon" },
+            { id: "appliances-pigeon", menuName: "Appliances", brandName: "Pigeon", displayName: "Appliances > Pigeon" },
+            { id: "gas-stoves-pigeon", menuName: "Gas Stoves", brandName: "Pigeon", displayName: "Gas Stoves > Pigeon" }
+        ];
+
+        const products = [
+            { id: "pigeon-p1", title: "Deluxe Pressure Cooker 3L", category: "cookers-pigeon", categoryDisplayName: "Cookers > Pigeon", origPrice: 1445, offerPrice: 795, image: placeholders.cooker, desc: "Pigeon brand high quality cooker" },
+            { id: "pigeon-p2", title: "Deluxe Pressure Cooker 5L", category: "cookers-pigeon", categoryDisplayName: "Cookers > Pigeon", origPrice: 2095, offerPrice: 1152, image: placeholders.cooker, desc: "Pigeon brand high quality cooker" },
+            { id: "pigeon-p3", title: "Ameze Plus Mixer Grinder 3 Jar", category: "appliances-pigeon", categoryDisplayName: "Appliances > Pigeon", origPrice: 2695, offerPrice: 1213, image: placeholders.mixer, desc: "Pigeon brand high quality mixer" },
+            { id: "pigeon-p4", title: "Induction Cooktop Prime", category: "appliances-pigeon", categoryDisplayName: "Appliances > Pigeon", origPrice: 3446, offerPrice: 1723, image: placeholders.induction, desc: "Pigeon brand quality induction" },
+            { id: "pigeon-p5", title: "Biryani Pot 11L", category: "cookware-pigeon", categoryDisplayName: "Cookware > Pigeon", origPrice: 3075, offerPrice: 1691, image: placeholders.pan, desc: "Pigeon brand biryani pot" },
+            { id: "pigeon-p6", title: "Concave Tawa 260", category: "cookware-pigeon", categoryDisplayName: "Cookware > Pigeon", origPrice: 1175, offerPrice: 588, image: placeholders.pan, desc: "Pigeon brand concave tawa" }
+        ];
+
+        try {
+            for (let cat of categories) await Database.saveCustomCategory(cat);
+            for (let prod of products) await Database.saveCustomProduct(prod);
+            alert("Migration Successful! " + products.length + " products added.");
+            window.location.href = "admin.html";
+        } catch (err) {
+            console.error(err);
+            alert("Migration Failed. Check console.");
+        }
+    }
+
+    if (new URLSearchParams(window.location.search).get('migrate') === '1') {
+        if (confirm("Run PDF Product Migration for Pigeon?")) migratePDFData();
+    }
 });
