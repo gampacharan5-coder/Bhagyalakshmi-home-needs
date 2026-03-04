@@ -146,6 +146,8 @@ body {
 .manage-inventory-section {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    /* Ensure it spans the grid cell height */
 }
 
 .form-group {
