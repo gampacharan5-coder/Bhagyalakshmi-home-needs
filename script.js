@@ -154,10 +154,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     function handleHashScroll() {
         const hash = window.location.hash;
         if (hash && hash !== '#') {
-            const target = document.querySelector(hash);
+            const cleanId = hash.replace('#', '');
+            const target = document.getElementById(cleanId);
             if (target) {
                 setTimeout(() => {
-                    const headerOffset = 85;
+                    const headerOffset = 95;
                     const elementPosition = target.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                     window.scrollTo({
@@ -174,7 +175,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderNavigationMenu();
 
         // Handle initial hash in URL
-        setTimeout(handleHashScroll, 500);
+        setTimeout(handleHashScroll, 800);
     }
 
     // Listen for hash changes (for menu clicks on the same page)
@@ -247,38 +248,83 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     // ---------------------------------------------
 
-    // Smooth scrolling for navigation links
-    const scrollLinks = document.querySelectorAll('a[href^="#"]');
+    // --- Consolidated Navigation Delegation ---
+    document.addEventListener('click', (e) => {
+        // 1. Handle Internal Hash Links (Smooth Scroll with Offset)
+        const anchor = e.target.closest('a[href^="#"], a[href*="all-products.html#"]');
+        if (anchor) {
+            const url = new URL(anchor.href, window.location.origin);
+            const hash = url.hash;
 
-    scrollLinks.forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const targetId = this.getAttribute('href');
+            // If it's a hash link for the current conceptual "Products" navigation
+            if (hash && hash !== '#' && (url.pathname === window.location.pathname || url.pathname.endsWith('all-products.html') || window.location.pathname.endsWith('all-products.html'))) {
+                const cleanId = hash.replace('#', '');
+                const target = document.getElementById(cleanId);
 
-            // Skip generic hash links used for accordion toggles
-            if (targetId === '#') return;
+                if (target) {
+                    e.preventDefault();
 
-            e.preventDefault();
+                    // Close mobile menu if it was open
+                    if (navLinks && navLinks.classList.contains('active')) {
+                        navLinks.classList.remove('active');
+                    }
+                    document.querySelectorAll('.mobile-open').forEach(el => el.classList.remove('mobile-open'));
 
-            const targetSection = document.querySelector(targetId);
+                    const headerOffset = 95;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-            if (targetSection) {
-                // Calculate the fixed header height offset (approx 80px)
-                const headerOffset = 80;
-                const elementPosition = targetSection.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
 
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
+                    // Update URL hash without jumping
+                    history.pushState(null, null, hash);
+                }
             }
-        });
+        }
+
+        // 2. Handle Mobile Menu Toggles (Accordion)
+        const productsToggle = e.target.closest('#mobile-products-toggle');
+        if (productsToggle) {
+            e.preventDefault();
+            const content = document.getElementById('main-dropdown-content');
+            if (content) {
+                // Close all other submenus first
+                document.querySelectorAll('.dropdown-submenu-content.mobile-open').forEach(sub => {
+                    sub.classList.remove('mobile-open');
+                });
+                content.classList.toggle('mobile-open');
+            }
+        }
+
+        const subTitle = e.target.closest('.dropdown-submenu-title');
+        if (subTitle && window.innerWidth <= 768) {
+            e.preventDefault();
+            const submenuContent = subTitle.nextElementSibling;
+            if (submenuContent) {
+                const parent = subTitle.closest('.dropdown-content');
+                if (parent) {
+                    parent.querySelectorAll('.dropdown-submenu-content.mobile-open').forEach(sub => {
+                        if (sub !== submenuContent) sub.classList.remove('mobile-open');
+                    });
+                }
+                submenuContent.classList.toggle('mobile-open');
+            }
+        }
+
+        // 3. Generic Close Triggers
+        if (e.target.closest('.nav-close-trigger') || (e.target.closest('.nav-links > li > a') && !e.target.closest('#mobile-products-toggle'))) {
+            if (navLinks && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+            }
+            document.querySelectorAll('.mobile-open').forEach(el => el.classList.remove('mobile-open'));
+        }
     });
 
     // Live Search Dropdown Functionality
-    let globalNavProductCards = [];
     let searchDebounceTimer;
-
     window.filterProducts = function () {
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = setTimeout(() => {
@@ -296,8 +342,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             const customProducts = window.globalStoreData.customProducts;
             const hiddenProducts = window.globalStoreData.hiddenProducts;
-
-            // Combine and filter
             const allItems = [...PRODUCTS_DATA, ...customProducts].filter(p => !hiddenProducts.includes(p.title));
             const results = allItems.filter(p => p.title.toLowerCase().includes(searchTerm));
 
@@ -311,27 +355,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     itemDiv.href = (isAllProd ? '' : 'all-products.html') + '#' + anchorId;
                     itemDiv.className = 'search-result-item';
 
-                    itemDiv.addEventListener('click', (e) => {
-                        if (!isAllProd) return; // Allow navigation to work naturally
-
-                        e.preventDefault();
-                        dropdown.classList.remove('active');
-                        searchInput.value = '';
-
-                        const targetCard = document.getElementById(anchorId);
-                        if (targetCard) {
-                            const headerOffset = 80;
-                            const elementPosition = targetCard.getBoundingClientRect().top;
-                            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-
-                            const originalBg = targetCard.style.backgroundColor;
-                            targetCard.style.transition = 'background-color 0.5s ease';
-                            targetCard.style.backgroundColor = '#fff3e0';
-                            setTimeout(() => { targetCard.style.backgroundColor = originalBg; }, 1500);
-                        }
-                    });
-
                     itemDiv.innerHTML = `
                         <img src="${p.image}" class="search-result-img" alt="${p.title}" onerror="this.src='mixer.png'">
                         <div class="search-result-info">
@@ -342,78 +365,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                     dropdown.appendChild(itemDiv);
                 });
             }
-
             dropdown.classList.add('active');
-
-            if (window.innerWidth <= 768) {
-                const navLinks = document.querySelector('.nav-links');
-                if (navLinks) navLinks.scrollTo({ top: 0, behavior: 'smooth' });
-            }
         }, 300);
     };
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function (event) {
+    // Close search dropdown when clicking outside
+    document.addEventListener('click', (event) => {
         const searchContainer = document.querySelector('.nav-search-container');
         const dropdown = document.getElementById('searchResultsDropdown');
-
         if (dropdown && searchContainer && !searchContainer.contains(event.target)) {
             dropdown.classList.remove('active');
         }
-    });
-
-    // --- Mobile Menu Accordion Handlers ---
-
-    // 1. Toggle Our Products
-    const productsToggle = document.getElementById('mobile-products-toggle');
-    if (productsToggle) {
-        productsToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation(); // Prevent bubbling to document
-            const content = document.getElementById('main-dropdown-content');
-            if (content) {
-                const isOpen = content.classList.contains('mobile-open');
-                // Close all other submenus first for a clean accordion effect
-                document.querySelectorAll('.dropdown-submenu-content.mobile-open').forEach(sub => {
-                    sub.classList.remove('mobile-open');
-                });
-                content.classList.toggle('mobile-open');
-            }
-        });
-    }
-
-    // 2. Toggle Submenus (Event Delegation for Dynamic Content)
-    document.addEventListener('click', (e) => {
-        const title = e.target.closest('.dropdown-submenu-title');
-        if (title && window.innerWidth <= 768) {
-            e.preventDefault();
-            e.stopPropagation();
-            const submenuContent = title.nextElementSibling;
-            if (submenuContent) {
-                // close other submenus in the same group
-                const parent = title.closest('.dropdown-content');
-                if (parent) {
-                    parent.querySelectorAll('.dropdown-submenu-content.mobile-open').forEach(sub => {
-                        if (sub !== submenuContent) sub.classList.remove('mobile-open');
-                    });
-                }
-                submenuContent.classList.toggle('mobile-open');
-            }
-        }
-    });
-
-    // 3. Close Menu on Link Click
-    const closeTriggers = document.querySelectorAll('.nav-close-trigger, .nav-links > li > a:not(#mobile-products-toggle)');
-    closeTriggers.forEach(link => {
-        link.addEventListener('click', () => {
-            if (navLinks && navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-            }
-            // Also reset accordions for next open
-            document.querySelectorAll('.dropdown-content.mobile-open, .dropdown-submenu-content.mobile-open').forEach(el => {
-                el.classList.remove('mobile-open');
-            });
-        });
     });
 
 });
