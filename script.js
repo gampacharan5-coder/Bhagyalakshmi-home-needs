@@ -115,18 +115,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         menuContainer.innerHTML = '';
 
         if (!customCategoriesData || customCategoriesData.length === 0) {
-            menuContainer.innerHTML = '<a href="#" style="padding: 10px 20px; color: #888; font-style: italic;">No categories added</a>';
+            menuContainer.innerHTML = '<a href="javascript:void(0);" style="padding: 10px 20px; color: #888; font-style: italic;">No categories added</a>';
             return;
         }
 
         // Group categories by menuName and De-duplicate brand names
         const grouped = {};
         customCategoriesData.forEach(cat => {
-            if (!grouped[cat.menuName]) grouped[cat.menuName] = [];
+            const mName = cat.menuName || "Products";
+            if (!grouped[mName]) grouped[mName] = [];
 
             // Only add if this brand isn't already in this menu group
-            if (!grouped[cat.menuName].some(existing => existing.brandName === cat.brandName)) {
-                grouped[cat.menuName].push(cat);
+            if (!grouped[mName].some(existing => existing.brandName === cat.brandName)) {
+                grouped[mName].push(cat);
             }
         });
 
@@ -135,7 +136,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const submenu = document.createElement('div');
             submenu.className = 'dropdown-submenu';
 
-            let submenuHtml = `<a href="#" class="dropdown-submenu-title">${menuName}</a>`;
+            let submenuHtml = `<a href="javascript:void(0);" class="dropdown-submenu-title">${menuName}</a>`;
             submenuHtml += `<div class="dropdown-submenu-content">`;
 
             categories.forEach(cat => {
@@ -205,43 +206,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
             }
         }
-    }
-
-    // --- Dynamic Custom Navigation Categories Loader ---
-    // customCategoriesData already loaded from Database
-    const mainDropdownContent = document.getElementById('main-dropdown-content');
-
-    if (mainDropdownContent) {
-        customCategoriesData.forEach(cat => {
-            let targetSubmenu = null;
-            const allSubmenus = mainDropdownContent.querySelectorAll('.dropdown-submenu');
-            allSubmenus.forEach(sub => {
-                const titleNode = sub.querySelector('.dropdown-submenu-title');
-                if (titleNode && titleNode.textContent.trim().toLowerCase() === cat.menuName.toLowerCase()) {
-                    targetSubmenu = sub;
-                }
-            });
-
-            if (!targetSubmenu) {
-                targetSubmenu = document.createElement('div');
-                targetSubmenu.className = 'dropdown-submenu';
-                targetSubmenu.innerHTML = `
-                    <a href="javascript:void(0);" class="dropdown-submenu-title">${cat.menuName}</a>
-                    <div class="dropdown-submenu-content"></div>
-                `;
-                mainDropdownContent.appendChild(targetSubmenu);
-            }
-
-            const submenuContent = targetSubmenu.querySelector('.dropdown-submenu-content');
-            if (submenuContent) {
-                if (!submenuContent.querySelector(`a[href="#${cat.id}"]`)) {
-                    const brandLink = document.createElement('a');
-                    brandLink.href = `#${cat.id}`;
-                    brandLink.textContent = cat.brandName;
-                    submenuContent.appendChild(brandLink);
-                }
-            }
-        });
     }
 
     // --- Dynamic Offers Banner ---
@@ -392,15 +356,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // 2. Toggle Submenus (Mixer, Grinder, etc.)
-    const subMenuTitles = document.querySelectorAll('.dropdown-submenu-title');
-    subMenuTitles.forEach(title => {
-        title.addEventListener('click', (e) => {
+    // 2. Toggle Submenus (Event Delegation for Dynamic Content)
+    document.addEventListener('click', (e) => {
+        const title = e.target.closest('.dropdown-submenu-title');
+        if (title && window.innerWidth <= 768) {
             e.preventDefault();
             e.stopPropagation();
             const submenuContent = title.nextElementSibling;
             if (submenuContent) {
-                // Optional: close other submenus in the same group
+                // close other submenus in the same group
                 const parent = title.closest('.dropdown-content');
                 if (parent) {
                     parent.querySelectorAll('.dropdown-submenu-content.mobile-open').forEach(sub => {
@@ -409,7 +373,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
                 submenuContent.classList.toggle('mobile-open');
             }
-        });
+        }
     });
 
     // 3. Close Menu on Link Click
