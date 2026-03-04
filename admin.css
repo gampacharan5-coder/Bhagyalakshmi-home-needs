@@ -229,6 +229,11 @@ body {
     border: 1px solid #eee;
 }
 
+/* Force scrolling on lists that occupy their own full row without a height limit */
+.full-width-card .custom-products-grid {
+    max-height: 300px;
+}
+
 /* Custom scrollbar for better look */
 .custom-products-grid::-webkit-scrollbar {
     width: 8px;
