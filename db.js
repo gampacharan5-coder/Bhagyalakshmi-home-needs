@@ -238,7 +238,8 @@ const Database = {
             hiddenStoreProducts: [],
             hiddenStoreCategories: [],
             storeOfferBannerText: "",
-            chatbotEnabled: true
+            chatbotEnabled: true,
+            hideDefaultMarquees: false
         };
         if (useFirebase) {
             try {

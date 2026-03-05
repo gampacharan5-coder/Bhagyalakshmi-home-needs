@@ -513,6 +513,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // --- Hide Default Marquees Toggle ---
+    const hideMarqueesCb = document.getElementById('hide-default-marquees-cb');
+    if (hideMarqueesCb) {
+        hideMarqueesCb.checked = settings.hideDefaultMarquees === true;
+        hideMarqueesCb.addEventListener('change', async (e) => {
+            await Database.saveSetting('hideDefaultMarquees', e.target.checked);
+
+            // Re-use banner success message briefly for UX
+            const msg = document.getElementById('marquee-msg');
+            msg.textContent = 'Settings updated successfully!';
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+                msg.textContent = 'Marquee Image Added Successfully!';
+            }, 3000);
+        });
+    }
+
     async function loadCustomMarquees() {
         const list = document.getElementById('custom-marquees-list');
         if (!list) return;

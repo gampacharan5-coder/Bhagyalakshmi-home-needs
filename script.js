@@ -220,8 +220,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // --- Dynamic Decorative Marquee ---
+    const scrollingTrack = document.querySelector('.scrolling-track');
+    const scrollingWrapper = document.querySelector('.scrolling-wrapper');
+
     if (customMarquees.length > 0) {
-        const scrollingTrack = document.querySelector('.scrolling-track');
         if (scrollingTrack) {
             scrollingTrack.innerHTML = '';
             // Duplicate multiple times to ensure the marquee is filled and loops smoothly
@@ -232,9 +234,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                     img.src = m.image;
                     img.className = 'scroll-img';
                     img.alt = 'Decorative Icon';
+                    img.style.objectFit = 'contain';
                     scrollingTrack.appendChild(img);
                 });
             }
+        }
+        if (scrollingWrapper) scrollingWrapper.style.display = 'block';
+    } else {
+        // If there are no custom marquees and the user has explicitly chosen to hide the default ones
+        const settings = Database.getSettings ? await Database.getSettings() : {};
+        if (settings.hideDefaultMarquees === true) {
+            if (scrollingWrapper) scrollingWrapper.style.display = 'none';
         }
     }
 
