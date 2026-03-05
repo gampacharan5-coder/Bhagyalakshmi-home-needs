@@ -1,6 +1,6 @@
 const initChatbot = () => {
-    // Disable chatbot entirely on the admin page to prevent UI conflicts
-    if (window.location.pathname.includes('admin.html')) return;
+    // Disable chatbot entirely on the admin page to prevent UI conflicts (supports both /admin.html and Vercel's clean /admin URL)
+    if (window.location.pathname.includes('admin')) return;
 
     if (document.querySelector('.chat-widget')) return; // Prevent duplicate injection
 
