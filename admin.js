@@ -37,6 +37,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        if (file.size >= 307200) {
+            alert("Image size must be less than 300KB.");
+            return;
+        }
+
         // Convert image to Base64 to save
         const reader = new FileReader();
         reader.onload = async function (event) {
@@ -192,6 +197,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const originalProduct = products.find(p => p.id === id);
 
         const newImageFile = document.getElementById('edit-prod-image').files[0];
+
+        if (newImageFile && newImageFile.size >= 307200) {
+            alert("Image size must be less than 300KB.");
+            return;
+        }
 
         const executeUpdate = async (imageData) => {
             const catSelect = document.getElementById('edit-prod-category');
